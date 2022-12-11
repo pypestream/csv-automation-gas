@@ -94,38 +94,7 @@ npm run login
 
 <img width="100%" src="https://i.imgur.com/zKCgkMl.gif">
 
-**3.** Now let's run the setup script to create a New spreadsheet and script project from the command line.
-
-```bash
-npm run setup
-```
-
-<img width="100%" src="https://imgur.com/Zk2eHFV.gif">
-
-Alternatively, you can use an existing Google Spreadsheet and Script file instead of creating a new one.
-
-<details>
-  <summary>See instructions here for using an existing project.</summary>
-
-You will need to update the `.clasp.json` file in the root of this project with the following three key/value pairs (see .clasp.json.SAMPLE for reference):
-
-```json
-{
-  "scriptId": "1PY037hPcy................................................",
-  "parentId": ["1Df30......................................."],
-  "rootDir": "./dist"
-}
-```
-
-- `scriptId`: Your existing script project's `scriptId`. You can find it by opening your spreadsheet, selecting **Tools > Script Editor** from the menubar, then **File > Project properties**, and it will be listed as "Script ID".
-
-- `parentId`: An array with a single string, the ID of the parent file (spreadsheet, doc, etc.) that the script project is bound to. You can get this ID from the url, where the format is usually `https://docs.google.com/spreadsheets/d/{id}/edit`. This allows you to run `npm run open` and open your file directly from the command line.
-
-- `rootDir`: This should always be `"./dist"`, i.e. the local build folder that is used to store project files.
-
-</details>
-
-Next, let's deploy the app so we can see it live in Google Spreadsheets.
+**3.** Next, let's deploy the app so we can see it live in Google Spreadsheets.
 
 <br/>
 
