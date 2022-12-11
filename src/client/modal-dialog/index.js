@@ -1,36 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import { serverFunctions } from '../utils/serverFunctions';
+import { CustomersList } from './components';
 import './styles.css';
 
-const CustomersList = ({ ...props }) => {
-  const [names, setNames] = useState('');
-  useEffect(() => {
-    // Call a server global function here and handle the response with .then() and .catch()
-    const setActiveSheetName = async () => {
-      const sheets = await serverFunctions.getSheetsData();
-      const sheetName = sheets.find((sh) => sh.isActive).name;
-      setNames(sheetName);
-    };
-    setActiveSheetName();
-  }, []);
-
+const App = ({ ...props }) => {
   return (
     <>
-      <h3>Customers :</h3>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        {...props}
-      >
-        <option selected>Select a Customer</option>
-        <option value="TestCustomer">TestCustomer</option>
-        <option value="TestCustomer1">TestCustomer1</option>
-        <option value="TestCust">Test Cust</option>
-      </select>
-      <p>Active Sheet: {names}</p>
+      <CustomersList {...props} />
     </>
   );
 };
 
-ReactDOM.render(<CustomersList />, document.getElementById('index'));
+ReactDOM.render(<App />, document.getElementById('index'));
