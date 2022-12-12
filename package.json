@@ -18,6 +18,7 @@
     "deploy:dev": "rimraf dist && npm run build:dev && npx clasp push",
     "deploy": "rimraf dist && npm run build && npx clasp push",
     "serve": "cross-env NODE_ENV=development webpack serve",
+    "lint": "eslint",
     "start": "npm run deploy:dev && npm run serve"
   },
   "keywords": [

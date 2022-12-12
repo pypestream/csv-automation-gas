@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { serverFunctions } from '../../utils/serverFunctions';
 
 const CustomersList = ({ ...props }) => {
-  const [names, setNames] = useState('');
+  const [customers, setCustomers] = useState([]);
   useEffect(() => {
-    // Call a server global function here and handle the response with .then() and .catch()
-    const setActiveSheetName = async () => {
-      const sheets = await serverFunctions.getSheetsData();
-      const sheetName = sheets.find((sh) => sh.isActive).name;
-      setNames(sheetName);
+    const fetchCustomers = async () => {
+      const resourceAPI = 'https://api.claybox1.im.pype.tech/ges/v5/customers';
+      const customersData = await serverFunctions.callApi(resourceAPI);
+      console.log(customersData);
+      setCustomers(customersData);
     };
-    setActiveSheetName();
+    fetchCustomers();
   }, []);
 
+  console.log(customers);
   return (
     <>
       <h3>Customers List:</h3>
@@ -23,11 +24,12 @@ const CustomersList = ({ ...props }) => {
         {...props}
       >
         <option value="">Select a Customer</option>
-        <option value="TestCustomer">TestCustomer</option>
-        <option value="TestCustomer1">TestCustomer1</option>
-        <option value="TestCust">Test Cust</option>
+        {customers.map((customer) => (
+          <option key={customer.id} value={customer.id}>
+            {customer.name}
+          </option>
+        ))}
       </select>
-      <p>Active Sheet: {names}</p>
     </>
   );
 };
