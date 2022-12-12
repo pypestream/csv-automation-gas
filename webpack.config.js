@@ -50,6 +50,18 @@ const clientEntrypoints = [
     filename: 'modal-dialog', // we'll add the .html suffix to these
     template: './src/client/modal-dialog/index.html',
   },
+  {
+    name: 'CLIENT - Sidebar',
+    entry: './src/client/auth-sidebar/index.js',
+    filename: 'auth-sidebar', // we'll add the .html suffix to these
+    template: './src/client/auth-sidebar/index.html',
+  },
+  {
+    name: 'CLIENT - Auth Tab',
+    entry: './src/client/auth-tab/index.js',
+    filename: 'auth-tab', // we'll add the .html suffix to these
+    template: './src/client/auth-tab/index.html',
+  },
 ];
 
 // define certificate locations
