@@ -365,6 +365,9 @@ const serverConfig = {
       // removes need for assigning public server functions to "global"
       autoGlobalExportsFiles: [serverEntry],
     }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(envVars),
+    }),
   ],
 };
 

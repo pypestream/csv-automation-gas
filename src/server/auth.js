@@ -1,34 +1,15 @@
-const getSheets = () => SpreadsheetApp.getActive().getSheets();
-
-const getActiveSheetName = () => SpreadsheetApp.getActive().getSheetName();
-
-const clientID = '0oa1ge814liY073k70h8';
-const clientSecret = 'e3Ebtj5imm277_cbFPhl7M3IxJELVgd7JKTAJ3l6';
-
-// eslint-disable-next-line import/prefer-default-export
-export const getSheetsData = () => {
-  const activeSheetName = getActiveSheetName();
-  return getSheets().map((sheet, index) => {
-    const name = sheet.getName();
-    return {
-      name,
-      index,
-      isActive: name === activeSheetName,
-    };
-  });
-};
+const CLIENT_ID = process.env.GAS_OKTA_CLIENT_ID;
+const CLIENT_SECRET = process.env.GAS_OKTA_CLIENT_SECRET;
+const AUTH_URL = `${process.env.GAS_OKTA_ISSUER}/v1/authorize`;
+const TOKEN_URL = `${process.env.GAS_OKTA_ISSUER}/v1/token`;
 
 export const getApiService = () => {
   // eslint-disable-next-line no-undef
   return OAuth2.createService('appscriptoauthokta')
-    .setAuthorizationBaseUrl(
-      'https://auth-preview.pypestream.com/oauth2/ausozswoou0GlWptP0h7/v1/authorize'
-    )
-    .setTokenUrl(
-      'https://auth-preview.pypestream.com/oauth2/ausozswoou0GlWptP0h7/v1/token'
-    )
-    .setClientId(clientID)
-    .setClientSecret(clientSecret)
+    .setAuthorizationBaseUrl(AUTH_URL)
+    .setTokenUrl(TOKEN_URL)
+    .setClientId(CLIENT_ID)
+    .setClientSecret(CLIENT_SECRET)
     .setCallbackFunction('authCallback')
     .setPropertyStore(PropertiesService.getUserProperties())
     .setScope('openid')
