@@ -5,7 +5,7 @@ import { serverFunctions } from '../utils/serverFunctions';
 const Sidebar = () => {
   const handleClick = async () => {
     try {
-      const url = serverFunctions.authorizeSidebar();
+      const url = await serverFunctions.authorizeSidebar();
       if (url) {
         window.open(url, '_blank');
         await serverFunctions.closeSidebar();
@@ -15,7 +15,7 @@ const Sidebar = () => {
       // eslint-disable-next-line no-undef
       Logger.log(err.message);
       console.log(err.message);
-      serverFunctions.closeSidebar();
+      await serverFunctions.closeSidebar();
     }
   };
   return (

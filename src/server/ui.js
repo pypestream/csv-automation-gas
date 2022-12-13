@@ -3,7 +3,8 @@ import { getApiService } from './auth';
 export const onOpen = () => {
   const menu = SpreadsheetApp.getUi()
     .createMenu('Upload and Publish CSV') // edit me!
-    .addItem('Click To Begin', 'showModal');
+    .addItem('Click To Begin', 'showModal')
+    .addItem('Logout', 'logout');
 
   menu.addToUi();
 };
@@ -62,3 +63,5 @@ export const showModal = () => {
     showSidebar();
   }
 };
+
+export const logout = () => getApiService().reset();

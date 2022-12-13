@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { serverFunctions } from '../../utils/serverFunctions';
 
+const CUSTOMERS_API = process.env.GAS_BOT_MANAGER_API_URL.replace(
+  'botmanager',
+  'ges/v5/customers'
+);
+
 const CustomersList = ({ ...props }) => {
   const [customers, setCustomers] = useState([]);
   useEffect(() => {
     const fetchCustomers = async () => {
-      const resourceAPI = 'https://api.claybox1.im.pype.tech/ges/v5/customers';
-      const customersData = await serverFunctions.callApi(resourceAPI);
-      console.log(customersData);
+      const customersData = await serverFunctions.callApi(CUSTOMERS_API);
       setCustomers(customersData);
     };
     fetchCustomers();

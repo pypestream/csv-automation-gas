@@ -4,7 +4,8 @@ import {
   closeSidebar,
   authCallback,
   showModal,
-  openDialog
+  openDialog,
+  logout
 } from './ui';
 
 import {
@@ -21,5 +22,6 @@ export {
   callApi,
   authCallback,
   showModal,
-  openDialog
+  openDialog,
+  logout
 };
