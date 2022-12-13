@@ -1,3 +1,3 @@
-import CustomersList from './CustomerList';
+import CSVUpload from './CSVUpload';
 
-export { CustomersList };
+export { CSVUpload };
