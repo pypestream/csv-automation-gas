@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { CSVUpload } from './components';
 import './styles.css';
 
-const App = ({ ...props }) => {
+const ModalDialog = ({ ...props }) => {
   return (
     <>
       <CSVUpload {...props} />
@@ -11,4 +11,4 @@ const App = ({ ...props }) => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('index'));
+ReactDOM.render(<ModalDialog />, document.getElementById('index'));

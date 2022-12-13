@@ -1,10 +1,31 @@
 {
   "timeZone": "America/New_York",
-  "dependencies": {},
+  "dependencies": {
+
+    "libraries": [
+      {
+        "userSymbol": "OAuth2",
+        "version": "43",
+        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF"
+      }
+    ],
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Docs",
+        "version": "v1",
+        "serviceId": "docs"
+      }
+    ]
+  
+  },
   "exceptionLogging": "STACKDRIVER",
   "oauthScopes": [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "openid",
     "https://www.googleapis.com/auth/script.container.ui",
-    "https://www.googleapis.com/auth/spreadsheets"
+    "https://www.googleapis.com/auth/script.external_request"
   ],
   "runtimeVersion": "V8"
 }
