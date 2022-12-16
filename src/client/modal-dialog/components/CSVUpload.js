@@ -68,7 +68,7 @@ const CSVUpload = () => {
         type="submit"
         disabled={dataLoading || !selectedCustomer || !selectedSolution}
       >
-        Upload CSV
+        Publish
       </Button>
     </Form>
   );
