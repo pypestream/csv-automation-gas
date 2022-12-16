@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 import { serverFunctions } from '../utils/serverFunctions';
+import PypestreamLogo from './logo.svg';
 
 const Sidebar = () => {
   const handleClick = async () => {
@@ -18,12 +21,45 @@ const Sidebar = () => {
       await serverFunctions.closeSidebar();
     }
   };
+
   return (
-    <div>
-      <p className="header">First we need to Authorize with our API.</p>
-      <button className="btn" id="btn" onClick={handleClick}>
-        Authorize
-      </button>
+    <div
+      className="d-flex flex-column align-items-center"
+      style={{ marginTop: '150px' }}
+    >
+      <img
+        src={PypestreamLogo}
+        alt="pypestream-logo"
+        style={{ width: '240px' }}
+      />
+      <Card
+        style={{
+          margin: '1rem',
+          padding: '30px',
+          borderRadius: '5px',
+          border: '1px solid rgba(0, 0, 0, 0.2)',
+        }}
+      >
+        <Card.Body style={{ padding: 0, marginBottom: '30px' }}>
+          <Card.Text
+            style={{ textAlign: 'center', fontSize: '16px', fontWeight: 500 }}
+          >
+            First we need to Authorize with our API.
+          </Card.Text>
+        </Card.Body>
+        <Button
+          variant="primary"
+          onClick={handleClick}
+          style={{
+            fontSize: '16px',
+            borderRadius: '4px',
+            border: '1px solid #0067f3',
+            backgroundColor: '#0067f3',
+          }}
+        >
+          Authorize
+        </Button>
+      </Card>
     </div>
   );
 };
