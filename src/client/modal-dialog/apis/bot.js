@@ -19,7 +19,7 @@ const getBotsEnv = (customer, solution) => {
 const getBotHistory = (customer, solution) => {
   const botsHistoryAPI = GET_BOT_HISTORY_API(customer);
   const payloadData = {
-    bot: solution,
+    bot: JSON.stringify(solution),
     contentType: 'application/json',
   };
   return serverFunctions.callApi(botsHistoryAPI, 'post', {
