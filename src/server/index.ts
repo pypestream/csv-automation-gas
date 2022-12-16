@@ -13,6 +13,8 @@ import {
   callApi
 } from './auth';
 
+import { createBlob } from "./utils";
+
 // Public functions must be exported as named exports
 export {
   onOpen,
@@ -23,5 +25,6 @@ export {
   authCallback,
   showModal,
   openDialog,
-  logout
+  logout,
+  createBlob
 };

@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getCustomers, getCustomer } from '../apis';
+import {
+  getCustomers,
+  getCustomer,
+  getBotHistory,
+  getBotsData,
+  getBotsEnv,
+} from '../apis';
 
 const useUpload = () => {
   const [customers, setCustomers] = useState([]);
@@ -47,7 +53,12 @@ const useUpload = () => {
     setSelectedSolution(e.target.value);
   };
 
-  const handleUploadCSV = () => {
+  const handleUploadCSV = async () => {
+    const bot = await getBotsData(selectedCustomer, selectedSolution);
+    const envs = await getBotsEnv(selectedCustomer, selectedSolution);
+    const botHistory = await getBotHistory(selectedCustomer, selectedSolution);
+    // Need further implementation to get versions, file related data.
+    console.log(bot, envs, botHistory);
     setToastMessage({
       type: 'success',
       title: 'Success',
