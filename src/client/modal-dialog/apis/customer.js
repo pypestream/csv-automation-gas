@@ -1,17 +1,12 @@
 /* eslint-disable prefer-template */
 import { serverFunctions } from '../../utils/serverFunctions';
+import { GET_CUSTOMERS_API, GET_CUSTOMER_API } from './url';
 
-const CUSTOMERS_API = process.env.GAS_BOT_MANAGER_API_URL.replace(
-  'botmanager',
-  'ges/v5/customers'
-);
-
-const getCustomers = () => serverFunctions.callApi(CUSTOMERS_API);
+const getCustomers = () => serverFunctions.callApi(GET_CUSTOMERS_API());
 
 const getCustomer = (customer) => {
-  const endpoint =
-    process.env.GAS_BOT_MANAGER_API_URL + '/customers/' + customer;
-  return serverFunctions.callApi(endpoint);
+  const customerApi = GET_CUSTOMER_API(customer);
+  return serverFunctions.callApi(customerApi);
 };
 
 export { getCustomers, getCustomer };

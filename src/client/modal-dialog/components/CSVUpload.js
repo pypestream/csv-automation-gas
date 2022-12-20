@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Toast from 'react-bootstrap/Toast';
+import Alert from 'react-bootstrap/Alert';
 
 import useUpload from '../hooks/useUpload';
 
@@ -21,6 +21,18 @@ const CSVUpload = () => {
 
   return (
     <Form onSubmit={handleUploadCSV}>
+      {!!toastMessage && (
+        <Alert
+          variant={toastMessage.type}
+          onClose={handleCloseToast}
+          dismissible
+        >
+          <Alert.Heading>
+            <strong className="mr-auto">{toastMessage.title}</strong>
+          </Alert.Heading>
+          <p>{toastMessage.description}</p>
+        </Alert>
+      )}
       <Form.Group className="mb-3" controlId="formCustomer">
         <Form.Label>Customer</Form.Label>
         <Form.Control
@@ -51,20 +63,12 @@ const CSVUpload = () => {
           ))}
         </Form.Control>
       </Form.Group>
-      {!!toastMessage && (
-        <Toast bg={toastMessage.type} onClose={handleCloseToast}>
-          <Toast.Header>
-            <strong className="mr-auto">{toastMessage.title}</strong>
-          </Toast.Header>
-          <Toast.Body>{toastMessage.description}</Toast.Body>
-        </Toast>
-      )}
       <Button
         variant="primary"
         type="submit"
         disabled={dataLoading || !selectedCustomer || !selectedSolution}
       >
-        Upload CSV
+        Publish
       </Button>
     </Form>
   );

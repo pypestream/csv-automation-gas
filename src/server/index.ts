@@ -9,19 +9,21 @@ import {
 } from './ui';
 
 import {
-  getSheetsData,
   callApi
 } from './auth';
+
+import { createBlob, createCSVFromSheet } from "./utils";
 
 // Public functions must be exported as named exports
 export {
   onOpen,
-  getSheetsData,
   authorizeSidebar,
   closeSidebar,
   callApi,
   authCallback,
   showModal,
   openDialog,
-  logout
+  logout,
+  createBlob,
+  createCSVFromSheet
 };

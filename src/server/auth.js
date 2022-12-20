@@ -16,7 +16,7 @@ export const getApiService = () => {
     .setGrantType('authorization_code');
 };
 
-export const callApi = (url, methodOpt, headersOpt) => {
+export const callApi = (url, methodOpt, payloadOpt = {}, headersOpt = {}) => {
   const service = getApiService();
   if (service.hasAccess()) {
     // A token is present, but it may be expired or invalid. Make a
@@ -27,11 +27,18 @@ export const callApi = (url, methodOpt, headersOpt) => {
     const method = methodOpt || 'GET';
     const headers = headersOpt || {};
     headers.Authorization = Utilities.formatString('Bearer %s', accessToken);
-    const resp = UrlFetchApp.fetch(url, {
+    let options = {
       headers,
       method,
       muteHttpExceptions: true, // Prevents thrown HTTP exceptions.
-    });
+    };
+    if (payloadOpt) {
+      options = {
+        ...options,
+        ...payloadOpt,
+      };
+    }
+    const resp = UrlFetchApp.fetch(url, options);
 
     const code = resp.getResponseCode();
     if (code >= 200 && code < 300) {
