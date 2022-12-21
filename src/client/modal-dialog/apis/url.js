@@ -7,7 +7,7 @@ const GET_CUSTOMER_API = (customerName) =>
   `${baseUrl}/customers/${customerName}`;
 
 const GET_BOTS_DATA_API = (customerName, solutionName) => {
-  const botId = `${customerName}.${solutionName}`;
+  const botId = `${solutionName}`;
   return `${baseUrl}/bots/${botId}`;
 };
 
@@ -19,10 +19,14 @@ const GET_BOTS_ENV_API = (customerName, solutionName) => {
 const GET_BOT_HISTORY_API = (customerName) =>
   `${baseUrl}/history/${customerName}`;
 
+const GET_BOT_VERSION_API = (solution, version) =>
+  `${baseUrl}/versions/${solution}.${version}`;
+
 export {
   GET_CUSTOMERS_API,
   GET_CUSTOMER_API,
   GET_BOTS_DATA_API,
   GET_BOTS_ENV_API,
   GET_BOT_HISTORY_API,
+  GET_BOT_VERSION_API,
 };

@@ -4,6 +4,7 @@ import {
   GET_BOTS_DATA_API,
   GET_BOTS_ENV_API,
   GET_BOT_HISTORY_API,
+  GET_BOT_VERSION_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -27,6 +28,9 @@ const getBotHistory = (customer, solution) => {
   });
 };
 
-const getBotVersion = (version) => serverFunctions.callApi(version);
+const getBotVersion = (solution, version) => {
+  const botVersionAPI = GET_BOT_VERSION_API(solution, version);
+  return serverFunctions.callApi(botVersionAPI);
+};
 
 export { getBotsData, getBotsEnv, getBotHistory, getBotVersion };

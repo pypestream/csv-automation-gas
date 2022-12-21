@@ -1,11 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import {
-  getCustomers,
-  getCustomer,
-  getBotHistory,
-  getBotsData,
-  getBotsEnv,
-} from '../apis';
+import { getCustomers, getCustomer, getBotsData, getBotVersion } from '../apis';
 
 const useUpload = () => {
   const [customers, setCustomers] = useState([]);
@@ -54,11 +49,32 @@ const useUpload = () => {
   };
 
   const handleUploadCSV = async () => {
-    const bot = await getBotsData(selectedCustomer, selectedSolution);
-    const envs = await getBotsEnv(selectedCustomer, selectedSolution);
-    const botHistory = await getBotHistory(selectedCustomer, selectedSolution);
-    // Need further implementation to get versions, file related data.
-    console.log(bot, envs, botHistory);
+    try {
+      /** Instructions
+       * 1. Get solution details.
+       * 2. Prepare CSV files.
+       * 3. Compile Template
+       * 4. Update bot configuration like bot type (main or survey) and language.
+       * 5. In case of survey, update the streams.
+       * 6. Deploy version
+       * 7. upload default NLU Data
+       * */
+      // 1. Get solution details.
+      let botData = {};
+      const bot = await getBotsData(selectedCustomer, selectedSolution);
+      botData = { ...bot.data };
+      const maxVersion = Math.max(
+        ...bot.data.versions.map((v) => Number(v.substr(1)))
+      );
+      const botVersion = await getBotVersion(
+        selectedSolution,
+        `v${maxVersion}`
+      );
+      botData.latestVersion = botVersion.data;
+      // 2. Prepare CSV files.
+    } catch (error) {
+      console.error(error);
+    }
     setToastMessage({
       type: 'success',
       title: 'Success',
