@@ -63,6 +63,13 @@ const CSVUpload = () => {
           ))}
         </Form.Control>
       </Form.Group>
+      <Form.Group className="mb-3" controlId="formEnv">
+        <Form.Label>Environment</Form.Label>
+        <Form.Control as="select" onChange={handleSolutionChange}>
+          <option value="sandbox">Sandbox</option>
+          <option value="live">Live</option>
+        </Form.Control>
+      </Form.Group>
       <Button
         variant="primary"
         type="submit"
