@@ -5,6 +5,7 @@ import {
   GET_BOTS_ENV_API,
   GET_BOT_HISTORY_API,
   GET_BOT_VERSION_API,
+  GET_BOT_FILE_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -33,4 +34,15 @@ const getBotVersion = (solution, version) => {
   return serverFunctions.callApi(botVersionAPI);
 };
 
-export { getBotsData, getBotsEnv, getBotHistory, getBotVersion };
+const getNLUFileFromServer = (version, filename) => {
+  const botFileAPI = GET_BOT_FILE_API(version, filename);
+  return serverFunctions.callApi(botFileAPI);
+};
+
+export {
+  getBotsData,
+  getBotsEnv,
+  getBotHistory,
+  getBotVersion,
+  getNLUFileFromServer,
+};

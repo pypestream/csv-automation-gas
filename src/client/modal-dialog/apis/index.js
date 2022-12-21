@@ -1,5 +1,11 @@
 import { getCustomers, getCustomer } from './customer';
-import { getBotsData, getBotsEnv, getBotHistory, getBotVersion } from './bot';
+import {
+  getBotsData,
+  getBotsEnv,
+  getBotHistory,
+  getBotVersion,
+  getNLUFileFromServer,
+} from './bot';
 
 export {
   getCustomers,
@@ -8,4 +14,5 @@ export {
   getBotsEnv,
   getBotHistory,
   getBotVersion,
+  getNLUFileFromServer,
 };
