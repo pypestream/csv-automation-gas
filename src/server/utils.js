@@ -1,4 +1,5 @@
-const createBlob = (data, type = 'text/plain') => Utilities.newBlob(data, type);
+const createBlob = (data, type = 'text/plain', filename = '') =>
+  Utilities.newBlob(data, type, filename);
 
 const createCSVFromSheet = () => {
   let csv = '';

@@ -25,6 +25,8 @@ const GET_BOT_VERSION_API = (solution, version) =>
 const GET_BOT_FILE_API = (version, filePath) =>
   `${baseUrl}/versions/${version}/files?filePath=${filePath}`;
 
+const GET_COMPILE_API = (version) => `${baseUrl}/compile?botVersion=${version}`;
+
 export {
   GET_CUSTOMERS_API,
   GET_CUSTOMER_API,
@@ -33,4 +35,5 @@ export {
   GET_BOT_HISTORY_API,
   GET_BOT_VERSION_API,
   GET_BOT_FILE_API,
+  GET_COMPILE_API,
 };

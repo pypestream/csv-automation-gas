@@ -5,6 +5,7 @@ import {
   getBotHistory,
   getBotVersion,
   getNLUFileFromServer,
+  compileTemplate,
 } from './bot';
 
 export {
@@ -15,4 +16,5 @@ export {
   getBotHistory,
   getBotVersion,
   getNLUFileFromServer,
+  compileTemplate,
 };

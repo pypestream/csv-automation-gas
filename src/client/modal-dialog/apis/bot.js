@@ -6,6 +6,7 @@ import {
   GET_BOT_HISTORY_API,
   GET_BOT_VERSION_API,
   GET_BOT_FILE_API,
+  GET_COMPILE_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -39,10 +40,28 @@ const getNLUFileFromServer = (version, filename) => {
   return serverFunctions.callApi(botFileAPI);
 };
 
+const compileTemplate = (template, compilerVersion) => {
+  const compileAPI = GET_COMPILE_API(compilerVersion);
+  console.log('***** compileAPI ', compileAPI);
+  console.log('**** template ', template);
+  // const payloadData = template;
+  // const payloadData = {
+  //   body: template,
+  //   // contentType: 'multipart/form-data',
+  // };
+  return serverFunctions.callApi(
+    compileAPI,
+    'put',
+    { payload: template },
+    { contentType: 'multipart/form-data' }
+  );
+};
+
 export {
   getBotsData,
   getBotsEnv,
   getBotHistory,
   getBotVersion,
   getNLUFileFromServer,
+  compileTemplate,
 };
