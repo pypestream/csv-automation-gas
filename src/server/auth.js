@@ -2,6 +2,7 @@ const CLIENT_ID = process.env.GAS_OKTA_CLIENT_ID;
 const CLIENT_SECRET = process.env.GAS_OKTA_CLIENT_SECRET;
 const AUTH_URL = `${process.env.GAS_OKTA_ISSUER}/v1/authorize`;
 const TOKEN_URL = `${process.env.GAS_OKTA_ISSUER}/v1/token`;
+const GOOGLE_IDPE = process.env.GAS_OKTA_GOOGLE_IDP_ID;
 
 export const getApiService = () => {
   // eslint-disable-next-line no-undef
@@ -13,7 +14,8 @@ export const getApiService = () => {
     .setCallbackFunction('authCallback')
     .setPropertyStore(PropertiesService.getUserProperties())
     .setScope('openid')
-    .setGrantType('authorization_code');
+    .setGrantType('authorization_code')
+    .setParam('idp', GOOGLE_IDPE);
 };
 
 export const callApi = (url, methodOpt, payloadOpt = {}, headersOpt = {}) => {
