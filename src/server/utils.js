@@ -8,7 +8,12 @@ const createCSVFromSheet = () => {
     .getDataRange()
     .getValues();
   values.forEach((e) => {
-    csv += `${e.join(',')}\n`;
+    csv += `${e
+      .map((col) => {
+        Logger.log(col);
+        return col ? `"${col.toString().replace(/"/g, '""')}"` : col;
+      })
+      .join(',')}\n`;
   });
   return csv;
 };

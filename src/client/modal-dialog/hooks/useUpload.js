@@ -60,42 +60,46 @@ const useUpload = () => {
   const getNLUData = async (latestVersion) => {
     // 1. bot.csv
     const botCSV = await serverFunctions.createCSVFromSheet();
-    const botBlob = await serverFunctions.createBlob(
-      botCSV,
-      'text/xml',
-      'bot.csv'
-    );
     // 2. intent.csv
     const intentCSV = await getNLUFileFromServer(
       latestVersion.id,
       'templates/intent.csv'
-    );
-    const intentBlob = await serverFunctions.createBlob(
-      intentCSV?.data?.file_data,
-      'text/xml',
-      'intent.csv'
     );
     // 3. entity.csv
     const entityCSV = await getNLUFileFromServer(
       latestVersion.id,
       'templates/entity.csv'
     );
-    const entityBlob = await serverFunctions.createBlob(
-      entityCSV?.data?.file_data,
-      'text/xml',
-      'entity.csv'
-    );
     const simplifiedTrainingData = getIntentFormat(intentCSV?.data?.file_data);
-    // 4. Make FormData object.
-    const formData = {
-      templateFile: botBlob,
-      trainingIntentFile: intentBlob,
-      trainingEntityFile: entityBlob,
-      simplifiedTrainingData,
-    };
-    console.log('***** formData ', formData);
 
-    return formData;
+    return [
+      {
+        field: 'templateFile',
+        data: botCSV,
+        type: 'text/xml',
+        filename: 'bot.csv',
+        isBlob: true,
+      },
+      {
+        field: 'trainingIntentFile',
+        data: intentCSV?.data?.file_data,
+        type: 'text/xml',
+        filename: 'bot.csv',
+        isBlob: true,
+      },
+      {
+        field: 'trainingEntityFile',
+        data: entityCSV?.data?.file_data,
+        type: 'text/xml',
+        filename: 'bot.csv',
+        isBlob: true,
+      },
+      {
+        field: 'simplifiedTrainingData',
+        data: simplifiedTrainingData,
+        isBlob: false,
+      },
+    ];
   };
 
   const handleUploadCSV = async () => {

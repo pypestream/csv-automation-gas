@@ -49,7 +49,7 @@ const compileTemplate = (template, compilerVersion) => {
   //   body: template,
   //   // contentType: 'multipart/form-data',
   // };
-  return serverFunctions.callApi(
+  return serverFunctions.callApiWithFormData(
     compileAPI,
     'put',
     { payload: template },

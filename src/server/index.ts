@@ -9,7 +9,8 @@ import {
 } from './ui';
 
 import {
-  callApi
+  callApi,
+  callApiWithFormData
 } from './auth';
 
 import { createBlob, createCSVFromSheet } from "./utils";
@@ -25,5 +26,6 @@ export {
   openDialog,
   logout,
   createBlob,
-  createCSVFromSheet
+  createCSVFromSheet,
+  callApiWithFormData
 };
