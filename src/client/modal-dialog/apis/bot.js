@@ -7,6 +7,7 @@ import {
   GET_BOT_VERSION_API,
   GET_BOT_FILE_API,
   GET_COMPILE_API,
+  GET_UPDATE_BOT_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -57,6 +58,12 @@ const compileTemplate = (template, compilerVersion) => {
   );
 };
 
+const updateBot = (botId, botConfig) => {
+  const updateBotAPI = GET_UPDATE_BOT_API(botId);
+
+  return serverFunctions.callApi(updateBotAPI, 'patch', { payload: botConfig });
+};
+
 export {
   getBotsData,
   getBotsEnv,
@@ -64,4 +71,5 @@ export {
   getBotVersion,
   getNLUFileFromServer,
   compileTemplate,
+  updateBot,
 };

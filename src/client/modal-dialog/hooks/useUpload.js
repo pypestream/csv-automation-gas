@@ -7,6 +7,7 @@ import {
   getBotVersion,
   getNLUFileFromServer,
   compileTemplate,
+  updateBot,
 } from '../apis';
 import { serverFunctions } from '../../utils/serverFunctions';
 import { getIntentFormat } from '../utils';
@@ -126,6 +127,7 @@ const useUpload = () => {
         `v${maxVersion}`
       );
       botData.latestVersion = botVersion.data;
+      console.log('****** botData ', botData);
       // 2. Prepare CSV files.
       const template = await getNLUData(botData.latestVersion);
       // 3. Compile Template
@@ -133,6 +135,11 @@ const useUpload = () => {
         template,
         botData.latestVersion.compilerVersion
       );
+      // 4. Update bot configuration like bot type (main or survey) and language.
+      await updateBot(botData.id, {
+        botLanguage: botData.botLanguage,
+        botType: botData.botType,
+      });
       console.log('**** status, data ', status, data);
       setToastMessage({
         type: 'success',
