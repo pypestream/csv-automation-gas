@@ -8,6 +8,7 @@ import {
   GET_BOT_FILE_API,
   GET_COMPILE_API,
   GET_UPDATE_BOT_API,
+  GET_DEPLOY_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -64,6 +65,17 @@ const updateBot = (botId, botConfig) => {
   return serverFunctions.callApi(updateBotAPI, 'patch', { payload: botConfig });
 };
 
+const deployVersion = (versionId, environment) => {
+  const deployAPI = GET_DEPLOY_API(versionId);
+
+  const payloadData = JSON.stringify({ environment });
+
+  return serverFunctions.callApi(deployAPI, 'put', {
+    payload: payloadData,
+    contentType: 'application/json',
+  });
+};
+
 export {
   getBotsData,
   getBotsEnv,
@@ -72,4 +84,5 @@ export {
   getNLUFileFromServer,
   compileTemplate,
   updateBot,
+  deployVersion,
 };

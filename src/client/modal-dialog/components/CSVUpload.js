@@ -15,6 +15,7 @@ const CSVUpload = () => {
     toastMessage,
     handleCustomerChange,
     handleSolutionChange,
+    handleEnvironmentChange,
     handleUploadCSV,
     handleCloseToast,
   } = useUpload();
@@ -65,7 +66,7 @@ const CSVUpload = () => {
       </Form.Group>
       <Form.Group className="mb-3" controlId="formEnv">
         <Form.Label>Environment</Form.Label>
-        <Form.Control as="select" onChange={handleSolutionChange}>
+        <Form.Control as="select" onChange={handleEnvironmentChange}>
           <option value="sandbox">Sandbox</option>
           <option value="live">Live</option>
         </Form.Control>

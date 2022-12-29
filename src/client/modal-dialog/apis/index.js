@@ -7,6 +7,7 @@ import {
   getNLUFileFromServer,
   compileTemplate,
   updateBot,
+  deployVersion,
 } from './bot';
 
 export {
@@ -19,4 +20,5 @@ export {
   getNLUFileFromServer,
   compileTemplate,
   updateBot,
+  deployVersion,
 };

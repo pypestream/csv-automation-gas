@@ -29,6 +29,8 @@ const GET_COMPILE_API = (version) => `${baseUrl}/compile?botVersion=${version}`;
 
 const GET_UPDATE_BOT_API = (botId) => `${baseUrl}/bots/${botId}`;
 
+const GET_DEPLOY_API = (versionId) => `${baseUrl}/versions/${versionId}/deploy`;
+
 export {
   GET_CUSTOMERS_API,
   GET_CUSTOMER_API,
@@ -39,4 +41,5 @@ export {
   GET_BOT_FILE_API,
   GET_COMPILE_API,
   GET_UPDATE_BOT_API,
+  GET_DEPLOY_API,
 };

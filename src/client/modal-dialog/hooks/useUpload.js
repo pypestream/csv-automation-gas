@@ -8,6 +8,7 @@ import {
   getNLUFileFromServer,
   compileTemplate,
   updateBot,
+  deployVersion,
 } from '../apis';
 import { serverFunctions } from '../../utils/serverFunctions';
 import { getIntentFormat } from '../utils';
@@ -18,6 +19,7 @@ const useUpload = () => {
   const [selectedCustomerDetails, setSelectedCustomerDetails] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedSolution, setSelectedSolution] = useState(null);
+  const [selectedEnvironment, setSelectedEnvironment] = useState('sandbox');
   const [dataLoading, setDataLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -56,6 +58,10 @@ const useUpload = () => {
 
   const handleSolutionChange = (e) => {
     setSelectedSolution(e.target.value);
+  };
+
+  const handleEnvironmentChange = (e) => {
+    setSelectedEnvironment(e.target.value);
   };
 
   const getNLUData = async (latestVersion) => {
@@ -131,16 +137,19 @@ const useUpload = () => {
       // 2. Prepare CSV files.
       const template = await getNLUData(botData.latestVersion);
       // 3. Compile Template
-      const { status, data } = await compileTemplate(
-        template,
-        botData.latestVersion.compilerVersion
-      );
+      await compileTemplate(template, botData.latestVersion.compilerVersion);
       // 4. Update bot configuration like bot type (main or survey) and language.
       await updateBot(botData.id, {
         botLanguage: botData.botLanguage,
         botType: botData.botType,
       });
-      console.log('**** status, data ', status, data);
+
+      if (botData.botType === 'survey') {
+        // 5. In case of survey, update the streams.
+      }
+      // 6. Deploy version
+      await deployVersion(botData.latestVersion.id, selectedEnvironment);
+      // 7. upload default NLU Data
       setToastMessage({
         type: 'success',
         title: 'Success',
@@ -177,6 +186,7 @@ const useUpload = () => {
     selectedCustomerDetails,
     handleCustomerChange,
     handleSolutionChange,
+    handleEnvironmentChange,
     handleUploadCSV,
     handleCloseToast,
   };
