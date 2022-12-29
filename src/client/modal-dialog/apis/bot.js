@@ -44,13 +44,6 @@ const getNLUFileFromServer = (version, filename) => {
 
 const compileTemplate = (template, compilerVersion) => {
   const compileAPI = GET_COMPILE_API(compilerVersion);
-  console.log('***** compileAPI ', compileAPI);
-  console.log('**** template ', template);
-  // const payloadData = template;
-  // const payloadData = {
-  //   body: template,
-  //   // contentType: 'multipart/form-data',
-  // };
   return serverFunctions.callApiWithFormData(
     compileAPI,
     'put',
