@@ -6,6 +6,7 @@ import {
   getBotsData,
   getBotVersion,
   getNLUFileFromServer,
+  uploadTemplate,
   compileTemplate,
   updateBot,
   deployVersion,
@@ -115,11 +116,12 @@ const useUpload = () => {
       /** Instructions
        * 1. Get solution details.
        * 2. Prepare CSV files.
-       * 3. Compile Template
-       * 4. Update bot configuration like bot type (main or survey) and language.
-       * 5. In case of survey, update the streams.
-       * 6. Deploy version
-       * 7. upload default NLU Data
+       * 3. Upload solution
+       * 4. Compile Template
+       * 5. Update bot configuration like bot type (main or survey) and language.
+       * 6. In case of survey, update the streams.
+       * 7. Deploy version
+       * 8. upload default NLU Data
        * */
       setDataLoading(true);
       // 1. Get solution details.
@@ -134,23 +136,28 @@ const useUpload = () => {
         `v${maxVersion}`
       );
       botData.latestVersion = botVersion.data;
-      console.log('****** botData ', botData);
       // 2. Prepare CSV files.
       const template = await getNLUData(botData.latestVersion);
-      // 3. Compile Template
+      // 3. Upload solution
+      await uploadTemplate(
+        botData.latestVersion.id,
+        botData.latestVersion.compilerVersion,
+        template
+      );
+      // 4. Compile Template
       await compileTemplate(template, botData.latestVersion.compilerVersion);
-      // 4. Update bot configuration like bot type (main or survey) and language.
+      // 5. Update bot configuration like bot type (main or survey) and language.
       await updateBot(botData.id, {
         botLanguage: botData.botLanguage,
         botType: botData.botType,
       });
 
       if (botData.botType === 'survey') {
-        // 5. In case of survey, update the streams.
+        // 6. In case of survey, update the streams.
       }
-      // 6. Deploy version
+      // 7. Deploy version
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
-      // 7. Create draft version
+      // 8. Create draft version
       await createNewBotVersion(botData.id);
       setToastMessage({
         type: 'success',
@@ -158,7 +165,7 @@ const useUpload = () => {
         description: "You've successfully uploaded CSV.",
       });
     } catch (error) {
-      console.error('**** error', error);
+      console.error(error);
     } finally {
       setDataLoading(false);
     }

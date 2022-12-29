@@ -10,6 +10,7 @@ import {
   GET_UPDATE_BOT_API,
   GET_DEPLOY_API,
   GET_CREATE_BOT_VERSION_API,
+  GET_UPLOAD_TEMPLATE_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -41,6 +42,16 @@ const getBotVersion = (solution, version) => {
 const getNLUFileFromServer = (version, filename) => {
   const botFileAPI = GET_BOT_FILE_API(version, filename);
   return serverFunctions.callApi(botFileAPI);
+};
+
+const uploadTemplate = (versionId, botVersion, template) => {
+  const updateTemplateAPI = GET_UPLOAD_TEMPLATE_API(versionId, botVersion);
+  return serverFunctions.callApiWithFormData(
+    updateTemplateAPI,
+    'post',
+    { payload: template },
+    { contentType: 'multipart/form-data' }
+  );
 };
 
 const compileTemplate = (template, compilerVersion) => {
@@ -85,6 +96,7 @@ export {
   getBotHistory,
   getBotVersion,
   getNLUFileFromServer,
+  uploadTemplate,
   compileTemplate,
   updateBot,
   deployVersion,
