@@ -9,6 +9,7 @@ import {
   compileTemplate,
   updateBot,
   deployVersion,
+  createNewBotVersion,
 } from '../apis';
 import { serverFunctions } from '../../utils/serverFunctions';
 import { getIntentFormat } from '../utils';
@@ -149,7 +150,8 @@ const useUpload = () => {
       }
       // 6. Deploy version
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
-      // 7. upload default NLU Data
+      // 7. Create draft version
+      await createNewBotVersion(botData.id);
       setToastMessage({
         type: 'success',
         title: 'Success',

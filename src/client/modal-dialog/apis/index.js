@@ -8,6 +8,7 @@ import {
   compileTemplate,
   updateBot,
   deployVersion,
+  createNewBotVersion,
 } from './bot';
 
 export {
@@ -21,4 +22,5 @@ export {
   compileTemplate,
   updateBot,
   deployVersion,
+  createNewBotVersion,
 };

@@ -9,6 +9,7 @@ import {
   GET_COMPILE_API,
   GET_UPDATE_BOT_API,
   GET_DEPLOY_API,
+  GET_CREATE_BOT_VERSION_API,
 } from './url';
 
 const getBotsData = (customer, solution) => {
@@ -69,6 +70,15 @@ const deployVersion = (versionId, environment) => {
   });
 };
 
+const createNewBotVersion = (botId) => {
+  const createBotAPI = GET_CREATE_BOT_VERSION_API(botId);
+
+  return serverFunctions.callApi(createBotAPI, 'post', {
+    payload: JSON.stringify({ botId }),
+    contentType: 'application/json',
+  });
+};
+
 export {
   getBotsData,
   getBotsEnv,
@@ -78,4 +88,5 @@ export {
   compileTemplate,
   updateBot,
   deployVersion,
+  createNewBotVersion,
 };
