@@ -67,3 +67,71 @@ export const callApi = (url, methodOpt, payloadOpt = {}, headersOpt = {}) => {
 export const logoutPypestream = () => {
   getApiService().reset();
 };
+
+// Make a request with form data
+export const callApiWithFormData = (
+  url,
+  methodOpt,
+  payload = [],
+  headersOpt = {}
+) => {
+  const service = getApiService();
+  if (service.hasAccess()) {
+    // A token is present, but it may be expired or invalid. Make a
+    // request and check the response code to be sure.
+
+    // Make the UrlFetch request and return the result.
+    const accessToken = service.getAccessToken();
+    const method = methodOpt || 'GET';
+    const headers = headersOpt || {};
+    headers.Authorization = Utilities.formatString('Bearer %s', accessToken);
+    let options = {
+      headers,
+      method,
+      muteHttpExceptions: true, // Prevents thrown HTTP exceptions.
+    };
+    if (payload) {
+      const formData = payload.payload.reduce((res, item) => {
+        if (item.isBlob) {
+          return {
+            ...res,
+            [item.field]: Utilities.newBlob(
+              item.data,
+              item.type,
+              item.filename
+            ),
+          };
+        }
+        return {
+          ...res,
+          [item.field]: item.data,
+        };
+      }, {});
+      options = {
+        ...options,
+        payload: formData,
+      };
+    }
+    const resp = UrlFetchApp.fetch(url, options);
+
+    const code = resp.getResponseCode();
+    if (code >= 200 && code < 300) {
+      const response = resp.getContentText(); // Success
+      return JSON.parse(response);
+    }
+    if (code === 401 || code === 403) {
+      // Not fully authorized for this action.
+      throw Error(`Backend server error: ${code} - ${resp?.getContentText()}`);
+    } else {
+      // Handle other response codes by logging them and throwing an
+      // exception.
+      Logger.log(
+        'Backend server error (%s): %s',
+        code.toString(),
+        resp.getContentText()
+      );
+      throw Error(`Backend server error: ${code} - ${resp?.getContentText()}`);
+    }
+  }
+  return null;
+};

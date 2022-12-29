@@ -1,11 +1,19 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import {
   getCustomers,
   getCustomer,
-  getBotHistory,
   getBotsData,
-  getBotsEnv,
+  getBotVersion,
+  getNLUFileFromServer,
+  uploadTemplate,
+  compileTemplate,
+  updateBot,
+  deployVersion,
+  createNewBotVersion,
 } from '../apis';
+import { serverFunctions } from '../../utils/serverFunctions';
+import { getIntentFormat } from '../utils';
 
 const useUpload = () => {
   const [customers, setCustomers] = useState([]);
@@ -13,6 +21,7 @@ const useUpload = () => {
   const [selectedCustomerDetails, setSelectedCustomerDetails] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedSolution, setSelectedSolution] = useState(null);
+  const [selectedEnvironment, setSelectedEnvironment] = useState('sandbox');
   const [dataLoading, setDataLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -53,17 +62,113 @@ const useUpload = () => {
     setSelectedSolution(e.target.value);
   };
 
+  const handleEnvironmentChange = (e) => {
+    setSelectedEnvironment(e.target.value);
+  };
+
+  const getNLUData = async (latestVersion) => {
+    // 1. bot.csv
+    const botCSV = await serverFunctions.createCSVFromSheet();
+    // 2. intent.csv
+    const intentCSV = await getNLUFileFromServer(
+      latestVersion.id,
+      'templates/intent.csv'
+    );
+    // 3. entity.csv
+    const entityCSV = await getNLUFileFromServer(
+      latestVersion.id,
+      'templates/entity.csv'
+    );
+    const simplifiedTrainingData = getIntentFormat(intentCSV?.data?.file_data);
+
+    return [
+      {
+        field: 'templateFile',
+        data: botCSV,
+        type: 'text/xml',
+        filename: 'bot.csv',
+        isBlob: true,
+      },
+      {
+        field: 'trainingIntentFile',
+        data: intentCSV?.data?.file_data,
+        type: 'text/xml',
+        filename: 'bot.csv',
+        isBlob: true,
+      },
+      {
+        field: 'trainingEntityFile',
+        data: entityCSV?.data?.file_data,
+        type: 'text/xml',
+        filename: 'bot.csv',
+        isBlob: true,
+      },
+      {
+        field: 'simplifiedTrainingData',
+        data: simplifiedTrainingData,
+        isBlob: false,
+      },
+    ];
+  };
+
   const handleUploadCSV = async () => {
-    const bot = await getBotsData(selectedCustomer, selectedSolution);
-    const envs = await getBotsEnv(selectedCustomer, selectedSolution);
-    const botHistory = await getBotHistory(selectedCustomer, selectedSolution);
-    // Need further implementation to get versions, file related data.
-    console.log(bot, envs, botHistory);
-    setToastMessage({
-      type: 'success',
-      title: 'Success',
-      description: "You've successfully uploaded CSV.",
-    });
+    try {
+      /** Instructions
+       * 1. Get solution details.
+       * 2. Prepare CSV files.
+       * 3. Upload solution
+       * 4. Compile Template
+       * 5. Update bot configuration like bot type (main or survey) and language.
+       * 6. In case of survey, update the streams.
+       * 7. Deploy version
+       * 8. upload default NLU Data
+       * */
+      setDataLoading(true);
+      // 1. Get solution details.
+      let botData = {};
+      const bot = await getBotsData(selectedCustomer, selectedSolution);
+      botData = { ...bot.data };
+      const maxVersion = Math.max(
+        ...bot.data.versions.map((v) => Number(v.substr(1)))
+      );
+      const botVersion = await getBotVersion(
+        selectedSolution,
+        `v${maxVersion}`
+      );
+      botData.latestVersion = botVersion.data;
+      // 2. Prepare CSV files.
+      const template = await getNLUData(botData.latestVersion);
+      // 3. Upload solution
+      await uploadTemplate(
+        botData.latestVersion.id,
+        botData.latestVersion.compilerVersion,
+        template
+      );
+      // 4. Compile Template
+      await compileTemplate(template, botData.latestVersion.compilerVersion);
+      // 5. Update bot configuration like bot type (main or survey) and language.
+      await updateBot(botData.id, {
+        botLanguage: botData.botLanguage,
+        botType: botData.botType,
+      });
+
+      if (botData.botType === 'survey') {
+        // 6. In case of survey, update the streams.
+      }
+      // 7. Deploy version
+      await deployVersion(botData.latestVersion.id, selectedEnvironment);
+      // 8. Create draft version
+      await createNewBotVersion(botData.id);
+      setToastMessage({
+        type: 'success',
+        title: 'Success',
+        description: "You've successfully uploaded CSV.",
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDataLoading(false);
+    }
   };
 
   const handleCloseToast = () => {
@@ -90,6 +195,7 @@ const useUpload = () => {
     selectedCustomerDetails,
     handleCustomerChange,
     handleSolutionChange,
+    handleEnvironmentChange,
     handleUploadCSV,
     handleCloseToast,
   };
