@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import Card from 'react-bootstrap/Card';
+import Spinner from 'react-bootstrap/Spinner';
 import {
   getCustomers,
   getCustomer,
@@ -12,8 +14,8 @@ import {
   deployVersion,
   createNewBotVersion,
 } from '../apis';
-import { serverFunctions } from '../../utils/serverFunctions';
-import { getIntentFormat } from '../utils';
+import { getIntentFormat, serverFunctions } from '../../utils';
+import useProgress from './useProgress';
 
 const useUpload = () => {
   const [customers, setCustomers] = useState([]);
@@ -22,8 +24,12 @@ const useUpload = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedSolution, setSelectedSolution] = useState(null);
   const [selectedEnvironment, setSelectedEnvironment] = useState('sandbox');
+  // const [isPublishDataSelected, setIsPublishDataSelected] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+
+  const progress = useProgress();
 
   const loadCustomers = async () => {
     try {
@@ -113,6 +119,14 @@ const useUpload = () => {
 
   const handleUploadCSV = async () => {
     try {
+      const {
+        setSolutionDetailsProgress,
+        setPrepareCSVFilesProgress,
+        setCompileTemplateProgress,
+        setUpdateBotConfigProgress,
+        setDeployVersionProgress,
+      } = progress;
+      setIsPublishing(true);
       /** Instructions
        * 1. Get solution details.
        * 2. Prepare CSV files.
@@ -123,8 +137,9 @@ const useUpload = () => {
        * 7. Deploy version
        * 8. upload default NLU Data
        * */
-      setDataLoading(true);
+      // setDataLoading(true);
       // 1. Get solution details.
+      setSolutionDetailsProgress('loading');
       let botData = {};
       const bot = await getBotsData(selectedCustomer, selectedSolution);
       botData = { ...bot.data };
@@ -136,8 +151,12 @@ const useUpload = () => {
         `v${maxVersion}`
       );
       botData.latestVersion = botVersion.data;
+      setSolutionDetailsProgress('on');
+      setPrepareCSVFilesProgress('loading');
       // 2. Prepare CSV files.
       const template = await getNLUData(botData.latestVersion);
+      setPrepareCSVFilesProgress('on');
+      setCompileTemplateProgress('loading');
       // 3. Upload solution
       await uploadTemplate(
         botData.latestVersion.id,
@@ -146,6 +165,8 @@ const useUpload = () => {
       );
       // 4. Compile Template
       await compileTemplate(template, botData.latestVersion.compilerVersion);
+      setCompileTemplateProgress('on');
+      setUpdateBotConfigProgress('loading');
       // 5. Update bot configuration like bot type (main or survey) and language.
       await updateBot(botData.id, {
         botLanguage: botData.botLanguage,
@@ -155,6 +176,8 @@ const useUpload = () => {
       if (botData.botType === 'survey') {
         // 6. In case of survey, update the streams.
       }
+      setUpdateBotConfigProgress('on');
+      setDeployVersionProgress('loading');
       // 7. Deploy version
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
       // 8. Create draft version
@@ -164,10 +187,12 @@ const useUpload = () => {
         title: 'Success',
         description: "You've successfully uploaded CSV.",
       });
+      setDeployVersionProgress('on');
     } catch (error) {
       console.error(error);
     } finally {
-      setDataLoading(false);
+      setIsPublishing(false);
+      serverFunctions.closeModal();
     }
   };
 
@@ -175,11 +200,109 @@ const useUpload = () => {
     setToastMessage(null);
   };
 
+  const ProgressElement = ({ fetched, fetchingMsg, fetchedMsg }) => {
+    if (fetched) {
+      return (
+        <>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"
+              fill="#0fa30f"
+            />
+          </svg>
+          <span>{fetchedMsg}</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <Spinner animation="border" variant="primary" size="sm" />
+        <span>{fetchingMsg}...</span>
+      </>
+    );
+  };
+
+  const renderProgress = () => {
+    const {
+      solutionDetailsProgress,
+      prepareCSVFilesProgress,
+      compileTemplateProgress,
+      updateBotConfigProgress,
+      deployVersionProgress,
+    } = progress;
+    return (
+      <Card body>
+        {solutionDetailsProgress !== 'off' && (
+          <div>
+            <ProgressElement
+              fetched={solutionDetailsProgress === 'on'}
+              fetchingMsg="Fetching Solution Details"
+              fetchedMsg="Solution Details Fetched."
+            />
+          </div>
+        )}
+        {prepareCSVFilesProgress !== 'off' && (
+          <div>
+            <ProgressElement
+              fetched={prepareCSVFilesProgress === 'on'}
+              fetchingMsg="Preparing CSV files"
+              fetchedMsg="CSV Files ready."
+            />
+          </div>
+        )}
+        {compileTemplateProgress !== 'off' && (
+          <div>
+            <ProgressElement
+              fetched={compileTemplateProgress === 'on'}
+              fetchingMsg="Compiling Template"
+              fetchedMsg="Template ready."
+            />
+          </div>
+        )}
+        {updateBotConfigProgress !== 'off' && (
+          <div>
+            <ProgressElement
+              fetched={updateBotConfigProgress === 'on'}
+              fetchingMsg="Updating configuration"
+              fetchedMsg="Configuration in place."
+            />
+          </div>
+        )}
+        {deployVersionProgress !== 'off' && (
+          <div>
+            <ProgressElement
+              fetched={deployVersionProgress === 'on'}
+              fetchingMsg="Uploading CSV and deploying new version."
+              fetchedMsg="CSV updated in a new version."
+            />
+          </div>
+        )}
+      </Card>
+    );
+  };
+
   useEffect(() => {
     if (selectedCustomer) {
       loadSolutions(selectedCustomer.name);
     }
   }, [selectedCustomer]);
+
+  // useEffect(() => {
+  //   if (serverFunctions.checkPublishDataExistsInPropertiesService()) {
+  //     setIsPublishDataSelected(true);
+  //     const { customerName, solutionName } =
+  //       serverFunctions.checkPublishDataExistsInPropertiesService();
+  //     setSelectedCustomer(customerName);
+  //     setSelectedSolution(solutionName);
+  //   } else {
+  //     loadCustomers();
+  //   }
+  // }, []);
 
   useEffect(() => {
     loadCustomers();
@@ -193,11 +316,13 @@ const useUpload = () => {
     selectedSolution,
     toastMessage,
     selectedCustomerDetails,
+    isPublishing,
     handleCustomerChange,
     handleSolutionChange,
     handleEnvironmentChange,
     handleUploadCSV,
     handleCloseToast,
+    renderProgress,
   };
 };
 

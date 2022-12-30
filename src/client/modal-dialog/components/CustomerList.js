@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { serverFunctions } from '../../utils/serverFunctions';
+import { serverFunctions } from '../../utils';
 
 const CUSTOMERS_API = process.env.GAS_BOT_MANAGER_API_URL.replace(
   'botmanager',

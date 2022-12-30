@@ -55,6 +55,13 @@ export const closeSidebar = () => {
   SpreadsheetApp.getUi().showSidebar(html);
 };
 
+export const closeModal = () => {
+  const html = HtmlService.createHtmlOutput(
+    '<script>google.script.host.close();</script>'
+  );
+  SpreadsheetApp.getUi().showModalDialog(html);
+};
+
 export const showModal = () => {
   const Authservice = getApiService();
   if (Authservice.hasAccess()) {
