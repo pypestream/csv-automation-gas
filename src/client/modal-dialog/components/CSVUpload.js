@@ -14,6 +14,7 @@ const CSVUpload = () => {
     selectedSolution,
     toastMessage,
     isPublishing,
+    isPublished,
     handleCustomerChange,
     handleSolutionChange,
     handleEnvironmentChange,
@@ -22,7 +23,7 @@ const CSVUpload = () => {
     renderProgress,
   } = useUpload();
 
-  if (isPublishing) {
+  if (isPublishing || isPublished) {
     return (
       <>
         {!!toastMessage && (

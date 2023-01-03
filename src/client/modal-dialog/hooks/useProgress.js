@@ -4,17 +4,14 @@ import Spinner from 'react-bootstrap/Spinner';
 
 const useProgress = () => {
   const [progressStack, updateProgressStack] = useState([]);
-  const [currentStep, setCurrentStep] = useState({});
 
   const resetProgress = () => {
     updateProgressStack([]);
-    setCurrentStep({});
   };
 
   const addProgress = (status, step = {}) => {
     updateProgressStack((prev) => {
       if (status === 'loading') {
-        setCurrentStep(step);
         return [
           ...prev,
           {
@@ -31,7 +28,7 @@ const useProgress = () => {
         {
           id: new Date().toISOString(),
           status,
-          msg: currentStep[status],
+          msg: step[status],
         },
       ];
     });
@@ -52,7 +49,7 @@ const useProgress = () => {
               fill="#0fa30f"
             />
           </svg>
-          <span>{msg}</span>
+          <span style={{ marginLeft: '1rem' }}>{msg}</span>
         </>
       );
     }
@@ -71,7 +68,7 @@ const useProgress = () => {
               fill="#0fa30f"
             />
           </svg>
-          <span>{msg}</span>
+          <span style={{ marginLeft: '1rem' }}>{msg}</span>
         </>
       );
     }
@@ -79,7 +76,7 @@ const useProgress = () => {
     return (
       <>
         <Spinner animation="border" variant="primary" size="sm" />
-        <span>{msg}</span>
+        <span style={{ marginLeft: '1rem' }}>{msg}</span>
       </>
     );
   };

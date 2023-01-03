@@ -26,6 +26,7 @@ const useUpload = () => {
   // const [isPublishDataSelected, setIsPublishDataSelected] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const { resetProgress, addProgress, renderProgress } = useProgress();
@@ -117,6 +118,7 @@ const useUpload = () => {
   };
 
   const handleUploadCSV = async () => {
+    let currentStep = {};
     try {
       setIsPublishing(true);
       resetProgress();
@@ -133,6 +135,7 @@ const useUpload = () => {
       // setDataLoading(true);
       // 1. Get solution details.
       addProgress('loading', STEPS.FETCH_SOLUTION_DETAILS);
+      currentStep = STEPS.FETCH_SOLUTION_DETAILS;
       let botData = {};
       const bot = await getBotsData(selectedCustomer, selectedSolution);
       botData = { ...bot.data };
@@ -144,12 +147,14 @@ const useUpload = () => {
         `v${maxVersion}`
       );
       botData.latestVersion = botVersion.data;
-      addProgress('success');
+      addProgress('success', STEPS.FETCH_SOLUTION_DETAILS);
       addProgress('loading', STEPS.PREPARE_CSV_FILES);
+      currentStep = STEPS.PREPARE_CSV_FILES;
       // 2. Prepare CSV files.
       const template = await getNLUData(botData.latestVersion);
-      addProgress('success');
+      addProgress('success', STEPS.PREPARE_CSV_FILES);
       addProgress('loading', STEPS.COMPILE_TEMPLATE);
+      currentStep = STEPS.COMPILE_TEMPLATE;
       // 3. Upload solution
       await uploadTemplate(
         botData.latestVersion.id,
@@ -158,8 +163,9 @@ const useUpload = () => {
       );
       // 4. Compile Template
       await compileTemplate(template, botData.latestVersion.compilerVersion);
-      addProgress('success');
+      addProgress('success', STEPS.COMPILE_TEMPLATE);
       addProgress('loading', STEPS.UPDATE_CONFIGURATION);
+      currentStep = STEPS.UPDATE_CONFIGURATION;
       // 5. Update bot configuration like bot type (main or survey) and language.
       await updateBot(botData.id, {
         botLanguage: botData.botLanguage,
@@ -169,8 +175,9 @@ const useUpload = () => {
       if (botData.botType === 'survey') {
         // 6. In case of survey, update the streams.
       }
-      addProgress('success');
+      addProgress('success', STEPS.UPDATE_CONFIGURATION);
       addProgress('loading', STEPS.DEPLOY_SOLUTION);
+      currentStep = STEPS.DEPLOY_SOLUTION;
       // 7. Deploy version
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
       // 8. Create draft version
@@ -180,12 +187,14 @@ const useUpload = () => {
         title: 'Success',
         description: "You've successfully uploaded CSV.",
       });
-      addProgress('success');
+      addProgress('success', STEPS.DEPLOY_SOLUTION);
+      currentStep = {};
     } catch (error) {
       console.error(error);
-      addProgress('error');
+      addProgress('error', currentStep);
     } finally {
       setIsPublishing(false);
+      setIsPublished(true);
       serverFunctions.closeModal();
     }
   };
@@ -225,6 +234,7 @@ const useUpload = () => {
     toastMessage,
     selectedCustomerDetails,
     isPublishing,
+    isPublished,
     handleCustomerChange,
     handleSolutionChange,
     handleEnvironmentChange,
