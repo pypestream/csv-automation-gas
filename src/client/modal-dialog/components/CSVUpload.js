@@ -13,12 +13,35 @@ const CSVUpload = () => {
     selectedCustomer,
     selectedSolution,
     toastMessage,
+    isPublishing,
+    isPublished,
     handleCustomerChange,
     handleSolutionChange,
     handleEnvironmentChange,
     handleUploadCSV,
     handleCloseToast,
+    renderProgress,
   } = useUpload();
+
+  if (isPublishing || isPublished) {
+    return (
+      <>
+        {!!toastMessage && (
+          <Alert
+            variant={toastMessage.type}
+            onClose={handleCloseToast}
+            dismissible
+          >
+            <Alert.Heading>
+              <strong className="mr-auto">{toastMessage.title}</strong>
+            </Alert.Heading>
+            <p>{toastMessage.description}</p>
+          </Alert>
+        )}
+        {renderProgress()}
+      </>
+    );
+  }
 
   return (
     <Form onSubmit={handleUploadCSV}>

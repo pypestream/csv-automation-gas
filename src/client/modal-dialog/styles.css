@@ -1,0 +1,37 @@
+.step-in-progress {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+}
+
+.step-in-progress .error-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  transform: rotate(45deg);
+  position: relative;
+}
+
+.step-in-progress .error-icon::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 0);
+  width: 4px;
+  height: 16px;
+  background-color: red;
+}
+
+.step-in-progress .error-icon::after {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
+  width: 16px;
+  height: 4px;
+  background-color: red;
+}

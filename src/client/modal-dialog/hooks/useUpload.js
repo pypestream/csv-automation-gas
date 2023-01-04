@@ -12,8 +12,9 @@ import {
   deployVersion,
   createNewBotVersion,
 } from '../apis';
-import { serverFunctions } from '../../utils/serverFunctions';
-import { getIntentFormat } from '../utils';
+import { getIntentFormat, serverFunctions } from '../../utils';
+import useProgress from './useProgress';
+import STEPS from './steps';
 
 const useUpload = () => {
   const [customers, setCustomers] = useState([]);
@@ -22,8 +23,13 @@ const useUpload = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedSolution, setSelectedSolution] = useState(null);
   const [selectedEnvironment, setSelectedEnvironment] = useState('sandbox');
+  // const [isPublishDataSelected, setIsPublishDataSelected] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+
+  const { resetProgress, addProgress, renderProgress } = useProgress();
 
   const loadCustomers = async () => {
     try {
@@ -112,7 +118,10 @@ const useUpload = () => {
   };
 
   const handleUploadCSV = async () => {
+    let currentStep = {};
     try {
+      setIsPublishing(true);
+      resetProgress();
       /** Instructions
        * 1. Get solution details.
        * 2. Prepare CSV files.
@@ -123,8 +132,10 @@ const useUpload = () => {
        * 7. Deploy version
        * 8. upload default NLU Data
        * */
-      setDataLoading(true);
+      // setDataLoading(true);
       // 1. Get solution details.
+      addProgress('loading', STEPS.FETCH_SOLUTION_DETAILS);
+      currentStep = STEPS.FETCH_SOLUTION_DETAILS;
       let botData = {};
       const bot = await getBotsData(selectedCustomer, selectedSolution);
       botData = { ...bot.data };
@@ -136,17 +147,29 @@ const useUpload = () => {
         `v${maxVersion}`
       );
       botData.latestVersion = botVersion.data;
+      addProgress('success', STEPS.FETCH_SOLUTION_DETAILS);
       // 2. Prepare CSV files.
+      addProgress('loading', STEPS.PREPARE_CSV_FILES);
+      currentStep = STEPS.PREPARE_CSV_FILES;
       const template = await getNLUData(botData.latestVersion);
+      addProgress('success', STEPS.PREPARE_CSV_FILES);
       // 3. Upload solution
+      addProgress('loading', STEPS.UPLOAD_CSV_FILES);
+      currentStep = STEPS.UPLOAD_CSV_FILES;
       await uploadTemplate(
         botData.latestVersion.id,
         botData.latestVersion.compilerVersion,
         template
       );
+      addProgress('success', STEPS.UPLOAD_CSV_FILES);
       // 4. Compile Template
+      addProgress('loading', STEPS.COMPILE_TEMPLATE);
+      currentStep = STEPS.COMPILE_TEMPLATE;
       await compileTemplate(template, botData.latestVersion.compilerVersion);
+      addProgress('success', STEPS.COMPILE_TEMPLATE);
       // 5. Update bot configuration like bot type (main or survey) and language.
+      addProgress('loading', STEPS.UPDATE_CONFIGURATION);
+      currentStep = STEPS.UPDATE_CONFIGURATION;
       await updateBot(botData.id, {
         botLanguage: botData.botLanguage,
         botType: botData.botType,
@@ -155,7 +178,10 @@ const useUpload = () => {
       if (botData.botType === 'survey') {
         // 6. In case of survey, update the streams.
       }
+      addProgress('success', STEPS.UPDATE_CONFIGURATION);
       // 7. Deploy version
+      addProgress('loading', STEPS.DEPLOY_SOLUTION);
+      currentStep = STEPS.DEPLOY_SOLUTION;
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
       // 8. Create draft version
       await createNewBotVersion(botData.id);
@@ -164,10 +190,20 @@ const useUpload = () => {
         title: 'Success',
         description: "You've successfully uploaded CSV.",
       });
+      addProgress('success', STEPS.DEPLOY_SOLUTION);
+      currentStep = {};
     } catch (error) {
       console.error(error);
+      addProgress('error', currentStep);
+      setToastMessage({
+        type: 'danger',
+        title: 'Error',
+        description: error?.message?.split(' - ')?.[0],
+      });
     } finally {
-      setDataLoading(false);
+      setIsPublishing(false);
+      setIsPublished(true);
+      serverFunctions.closeModal();
     }
   };
 
@@ -193,11 +229,14 @@ const useUpload = () => {
     selectedSolution,
     toastMessage,
     selectedCustomerDetails,
+    isPublishing,
+    isPublished,
     handleCustomerChange,
     handleSolutionChange,
     handleEnvironmentChange,
     handleUploadCSV,
     handleCloseToast,
+    renderProgress,
   };
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import { serverFunctions } from '../utils/serverFunctions';
+import { serverFunctions } from '../utils';
 import PypestreamLogo from './logo.svg';
 
 const Sidebar = () => {
