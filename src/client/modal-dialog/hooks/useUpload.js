@@ -217,18 +217,6 @@ const useUpload = () => {
     }
   }, [selectedCustomer]);
 
-  // useEffect(() => {
-  //   if (serverFunctions.checkPublishDataExistsInPropertiesService()) {
-  //     setIsPublishDataSelected(true);
-  //     const { customerName, solutionName } =
-  //       serverFunctions.checkPublishDataExistsInPropertiesService();
-  //     setSelectedCustomer(customerName);
-  //     setSelectedSolution(solutionName);
-  //   } else {
-  //     loadCustomers();
-  //   }
-  // }, []);
-
   useEffect(() => {
     loadCustomers();
   }, []);
