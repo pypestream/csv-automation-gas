@@ -9,6 +9,11 @@ export default {
     success: 'CSV Files ready.',
     error: 'Preparing CSV files failed.',
   },
+  UPLOAD_CSV_FILES: {
+    loading: 'Uploading CSV files...',
+    success: 'CSV Files uploaded.',
+    error: 'Uploading CSV files failed.',
+  },
   COMPILE_TEMPLATE: {
     loading: 'Compiling Template...',
     success: 'Template ready.',

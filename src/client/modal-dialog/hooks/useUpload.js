@@ -148,25 +148,28 @@ const useUpload = () => {
       );
       botData.latestVersion = botVersion.data;
       addProgress('success', STEPS.FETCH_SOLUTION_DETAILS);
+      // 2. Prepare CSV files.
       addProgress('loading', STEPS.PREPARE_CSV_FILES);
       currentStep = STEPS.PREPARE_CSV_FILES;
-      // 2. Prepare CSV files.
       const template = await getNLUData(botData.latestVersion);
       addProgress('success', STEPS.PREPARE_CSV_FILES);
-      addProgress('loading', STEPS.COMPILE_TEMPLATE);
-      currentStep = STEPS.COMPILE_TEMPLATE;
       // 3. Upload solution
+      addProgress('loading', STEPS.UPLOAD_CSV_FILES);
+      currentStep = STEPS.UPLOAD_CSV_FILES;
       await uploadTemplate(
         botData.latestVersion.id,
         botData.latestVersion.compilerVersion,
         template
       );
+      addProgress('success', STEPS.UPLOAD_CSV_FILES);
       // 4. Compile Template
+      addProgress('loading', STEPS.COMPILE_TEMPLATE);
+      currentStep = STEPS.COMPILE_TEMPLATE;
       await compileTemplate(template, botData.latestVersion.compilerVersion);
       addProgress('success', STEPS.COMPILE_TEMPLATE);
+      // 5. Update bot configuration like bot type (main or survey) and language.
       addProgress('loading', STEPS.UPDATE_CONFIGURATION);
       currentStep = STEPS.UPDATE_CONFIGURATION;
-      // 5. Update bot configuration like bot type (main or survey) and language.
       await updateBot(botData.id, {
         botLanguage: botData.botLanguage,
         botType: botData.botType,
@@ -176,9 +179,9 @@ const useUpload = () => {
         // 6. In case of survey, update the streams.
       }
       addProgress('success', STEPS.UPDATE_CONFIGURATION);
+      // 7. Deploy version
       addProgress('loading', STEPS.DEPLOY_SOLUTION);
       currentStep = STEPS.DEPLOY_SOLUTION;
-      // 7. Deploy version
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
       // 8. Create draft version
       await createNewBotVersion(botData.id);
@@ -192,6 +195,11 @@ const useUpload = () => {
     } catch (error) {
       console.error(error);
       addProgress('error', currentStep);
+      setToastMessage({
+        type: 'danger',
+        title: 'Error',
+        description: error?.message?.split(' - ')?.[0],
+      });
     } finally {
       setIsPublishing(false);
       setIsPublished(true);
