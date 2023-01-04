@@ -49,7 +49,7 @@ const useProgress = () => {
               fill="#0fa30f"
             />
           </svg>
-          <span style={{ marginLeft: '1rem' }}>{msg}</span>
+          <span>{msg}</span>
         </>
       );
     }
@@ -57,18 +57,8 @@ const useProgress = () => {
     if (status === 'error') {
       return (
         <>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"
-              fill="#0fa30f"
-            />
-          </svg>
-          <span style={{ marginLeft: '1rem' }}>{msg}</span>
+          <div className="error-icon" />
+          <span>{msg}</span>
         </>
       );
     }
@@ -76,7 +66,7 @@ const useProgress = () => {
     return (
       <>
         <Spinner animation="border" variant="primary" size="sm" />
-        <span style={{ marginLeft: '1rem' }}>{msg}</span>
+        <span>{msg}</span>
       </>
     );
   };
@@ -85,7 +75,7 @@ const useProgress = () => {
     return (
       <Card body>
         {progressStack.map((step) => (
-          <div key={step.id}>
+          <div key={step.id} className="step-in-progress">
             <ProgressElement status={step.status} msg={step.msg} />
           </div>
         ))}
