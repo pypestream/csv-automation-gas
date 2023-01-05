@@ -26,7 +26,7 @@ export default {
   },
   DEPLOY_SOLUTION: {
     loading: 'Uploading CSV and deploying new version...',
-    success: 'CSV updated in a new version.',
+    success: 'Solution Deployed.',
     error: 'Uploading CSV failed',
   },
 };

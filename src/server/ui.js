@@ -59,7 +59,7 @@ export const closeModal = () => {
   const html = HtmlService.createHtmlOutput(
     '<script>google.script.host.close();</script>'
   );
-  SpreadsheetApp.getUi().showModalDialog(html);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Open Publish Dialog');
 };
 
 export const showModal = () => {
