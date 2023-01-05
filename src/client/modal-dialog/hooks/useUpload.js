@@ -188,10 +188,11 @@ const useUpload = () => {
       setToastMessage({
         type: 'success',
         title: 'Success',
-        description: "You've successfully uploaded CSV.",
+        description: `You've successfully published ${botData.botName} solution as ${botData.latestVersion.version}.`,
       });
       addProgress('success', STEPS.DEPLOY_SOLUTION);
       currentStep = {};
+      serverFunctions.closeModal();
     } catch (error) {
       console.error(error);
       addProgress('error', currentStep);
@@ -203,7 +204,6 @@ const useUpload = () => {
     } finally {
       setIsPublishing(false);
       setIsPublished(true);
-      serverFunctions.closeModal();
     }
   };
 
