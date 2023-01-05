@@ -2,6 +2,11 @@
   display: grid;
   grid-template-columns: 24px 1fr;
   align-items: center;
+  margin-top: 15px;
+}
+
+.step-in-progress > span {
+  margin-left: 20px;
 }
 
 .step-in-progress .error-icon {

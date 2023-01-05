@@ -12,9 +12,8 @@ import {
   deployVersion,
   createNewBotVersion,
 } from '../apis';
-import { getIntentFormat, serverFunctions } from '../../utils';
+import { getIntentFormat, serverFunctions, STEPS } from '../../utils';
 import useProgress from './useProgress';
-import STEPS from './steps';
 
 const useUpload = () => {
   const [customers, setCustomers] = useState([]);
@@ -132,7 +131,6 @@ const useUpload = () => {
        * 7. Deploy version
        * 8. upload default NLU Data
        * */
-      // setDataLoading(true);
       // 1. Get solution details.
       addProgress('loading', STEPS.FETCH_SOLUTION_DETAILS);
       currentStep = STEPS.FETCH_SOLUTION_DETAILS;
@@ -179,20 +177,22 @@ const useUpload = () => {
         // 6. In case of survey, update the streams.
       }
       addProgress('success', STEPS.UPDATE_CONFIGURATION);
-      // 7. Deploy version
+      // 7. Publish version
       addProgress('loading', STEPS.DEPLOY_SOLUTION);
       currentStep = STEPS.DEPLOY_SOLUTION;
       await deployVersion(botData.latestVersion.id, selectedEnvironment);
       // 8. Create draft version
       await createNewBotVersion(botData.id);
+      addProgress('success', STEPS.DEPLOY_SOLUTION);
+      currentStep = {};
       setToastMessage({
         type: 'success',
         title: 'Success',
         description: `You've successfully published ${botData.botName} solution as ${botData.latestVersion.version}.`,
       });
-      addProgress('success', STEPS.DEPLOY_SOLUTION);
-      currentStep = {};
-      serverFunctions.closeModal();
+      setIsPublishing(false);
+      setIsPublished(true);
+      // await serverFunctions.closeModal();
     } catch (error) {
       console.error(error);
       addProgress('error', currentStep);
@@ -201,7 +201,6 @@ const useUpload = () => {
         title: 'Error',
         description: error?.message?.split(' - ')?.[0],
       });
-    } finally {
       setIsPublishing(false);
       setIsPublished(true);
     }
