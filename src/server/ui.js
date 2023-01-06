@@ -9,7 +9,10 @@ export const onOpen = () => {
     .addItem('Publish to Live', 'showPublishSidebarLive')
     .addItem('Open Publish Settings', 'showPublishDetailsModal')
     // Temporary method to delete script properties for testing purposes.
-    .addItem('Delete Saved Properties', 'deleteAllProperties');
+    .addItem(
+      'Delete Properties [Temporary, for testing]',
+      'deleteAllProperties'
+    );
 
   menu.addToUi();
 };
