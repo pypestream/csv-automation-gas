@@ -1,5 +1,5 @@
 /* eslint-disable prefer-template */
-import { serverFunctions } from '../../utils';
+import { serverFunctions } from '../utils';
 import {
   GET_BOTS_DATA_API,
   GET_BOTS_ENV_API,

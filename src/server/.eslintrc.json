@@ -12,7 +12,8 @@
     "import/prefer-default-export": "warn",
     "import/no-extraneous-dependencies": "warn",
     "prefer-object-spread": "warn",
-    "no-console": "off"
+    "no-console": "off",
+    "no-use-before-define": "off"
   },
   "settings": {
     "import/resolver": {

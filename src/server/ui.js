@@ -1,15 +1,21 @@
 import { getApiService } from './auth';
+import { getPublishDetails } from './utils';
 
+// Menu and Menu Items
 export const onOpen = () => {
   const menu = SpreadsheetApp.getUi()
-    .createMenu('Upload and Publish CSV') // edit me!
-    .addItem('Click To Begin', 'showModal')
-    .addItem('Logout', 'logout');
+    .createMenu('CSV Publish') // edit me!
+    .addItem('Publish to Sandbox', 'showPublishSidebarSandbox')
+    .addItem('Publish to Live', 'showPublishSidebarLive')
+    .addItem('Open Publish Settings', 'showPublishDetailsModal')
+    // Temporary method to delete script properties for testing purposes.
+    .addItem('Delete Saved Properties', 'deleteAllProperties');
 
   menu.addToUi();
 };
 
-const showSidebar = () => {
+// Auth Flow UI
+export const showAuthSidebar = () => {
   const Authservice = getApiService();
   let html = '';
   if (Authservice.hasAccess()) {
@@ -22,13 +28,6 @@ const showSidebar = () => {
     );
   }
   SpreadsheetApp.getUi().showSidebar(html);
-};
-
-export const openDialog = () => {
-  const html = HtmlService.createHtmlOutputFromFile('modal-dialog')
-    .setWidth(600)
-    .setHeight(600);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Open Publish Dialog');
 };
 
 export const authorizeSidebar = () => {
@@ -48,6 +47,44 @@ export const authCallback = (request) => {
   return HtmlService.createHtmlOutput('Denied. You can close this tab');
 };
 
+// Publish Flow UI
+export const openPublishSolutionSidebar = (env) => {
+  const data = getPublishDetails();
+  if (!data) {
+    showPublishDetailsModal();
+    return;
+  }
+  let html;
+  if (env === 'sandbox') {
+    html = HtmlService.createHtmlOutputFromFile(
+      'publish-sidebar-sandbox'
+    ).setTitle(`Publishing Solution to Sandbox`);
+  } else {
+    html = HtmlService.createHtmlOutputFromFile(
+      'publish-sidebar-live'
+    ).setTitle(`Publishing Solution to Live`);
+  }
+  SpreadsheetApp.getUi().showSidebar(html);
+};
+
+export const showPublishSidebarSandbox = () => {
+  const Authservice = getApiService();
+  if (Authservice.hasAccess()) {
+    openPublishSolutionSidebar('sandbox');
+  } else {
+    showAuthSidebar();
+  }
+};
+
+export const showPublishSidebarLive = () => {
+  const Authservice = getApiService();
+  if (Authservice.hasAccess()) {
+    openPublishSolutionSidebar('live');
+  } else {
+    showAuthSidebar();
+  }
+};
+
 export const closeSidebar = () => {
   const html = HtmlService.createHtmlOutput(
     '<script>google.script.host.close();</script>'
@@ -55,20 +92,38 @@ export const closeSidebar = () => {
   SpreadsheetApp.getUi().showSidebar(html);
 };
 
-export const closeModal = () => {
-  const html = HtmlService.createHtmlOutput(
-    '<script>google.script.host.close();</script>'
-  );
-  SpreadsheetApp.getUi().showModalDialog(html, 'Open Publish Dialog');
-};
-
-export const showModal = () => {
+// Publish Details Modal UI
+export const openPublishDetailsDialog = () => {
   const Authservice = getApiService();
   if (Authservice.hasAccess()) {
-    openDialog();
+    const html = HtmlService.createHtmlOutputFromFile('publish-details')
+      .setWidth(600)
+      .setHeight(600);
+    SpreadsheetApp.getUi().showModalDialog(html, 'Publish Details');
   } else {
-    showSidebar();
+    showAuthSidebar();
   }
 };
 
-export const logout = () => getApiService().reset();
+export const showPublishDetailsModal = () => {
+  const Authservice = getApiService();
+  if (Authservice.hasAccess()) {
+    openPublishDetailsDialog();
+  } else {
+    showAuthSidebar();
+  }
+};
+
+export const closeModal = () => {
+  const html = HtmlService.createHtmlOutput(
+    '<script>google.script.host.close();</script>'
+  )
+    .setWidth(600)
+    .setHeight(600);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Publish Dialog');
+};
+
+export const closeUI = () => {
+  // eslint-disable-next-line no-undef
+  google.script.host.close();
+};

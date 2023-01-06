@@ -6,7 +6,10 @@ import {
   authCallback,
   showModal,
   openDialog,
-  logout
+  showPublishSidebarSandbox,
+  showPublishSidebarLive,
+  showPublishDetailsModal,
+  closeUI
 } from './ui';
 
 import {
@@ -17,8 +20,9 @@ import {
 import {
   createBlob,
   createCSVFromSheet,
-  savePublishDataToPropertiesService,
-  checkPublishDataExistsInPropertiesService
+  savePublishDetails,
+  getPublishDetails,
+  deleteAllProperties
 } from "./utils";
 
 // Public functions must be exported as named exports
@@ -31,10 +35,14 @@ export {
   authCallback,
   showModal,
   openDialog,
-  logout,
   createBlob,
   createCSVFromSheet,
   callApiWithFormData,
-  savePublishDataToPropertiesService,
-  checkPublishDataExistsInPropertiesService,
+  savePublishDetails,
+  getPublishDetails,
+  showPublishSidebarSandbox,
+  showPublishSidebarLive,
+  showPublishDetailsModal,
+  deleteAllProperties,
+  closeUI
 };

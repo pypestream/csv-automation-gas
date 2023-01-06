@@ -11,65 +11,14 @@ import {
   updateBot,
   deployVersion,
   createNewBotVersion,
-} from '../apis';
+} from '../../apis';
 import { getIntentFormat, serverFunctions, STEPS } from '../../utils';
 import useProgress from './useProgress';
 
-const useUpload = () => {
-  const [customers, setCustomers] = useState([]);
-  const [solutions, setSolutions] = useState([]);
-  const [selectedCustomerDetails, setSelectedCustomerDetails] = useState(null);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [selectedSolution, setSelectedSolution] = useState(null);
-  const [selectedEnvironment, setSelectedEnvironment] = useState('sandbox');
-  // const [isPublishDataSelected, setIsPublishDataSelected] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [isPublishing, setIsPublishing] = useState(false);
-  const [isPublished, setIsPublished] = useState(false);
+const usePublish = (selectedEnvironment) => {
   const [toastMessage, setToastMessage] = useState(null);
 
   const { resetProgress, addProgress, renderProgress } = useProgress();
-
-  const loadCustomers = async () => {
-    try {
-      setDataLoading(true);
-      const resData = await getCustomers();
-      setCustomers([...resData.sort((a, b) => a.name.localeCompare(b.name))]);
-    } catch (error) {
-      console.log(error);
-      setCustomers([]);
-    } finally {
-      setDataLoading(false);
-    }
-  };
-
-  const loadSolutions = async (customer) => {
-    try {
-      setDataLoading(true);
-      const resData = await getCustomer(customer);
-      setSelectedCustomerDetails({ ...resData.data });
-      setSolutions(resData.data.bots);
-    } catch (error) {
-      console.log(error);
-      setSolutions([]);
-    } finally {
-      setDataLoading(false);
-    }
-  };
-
-  const handleCustomerChange = (e) => {
-    const customerId = e.target.value;
-    const customer = customers.find((c) => c.id === customerId);
-    setSelectedCustomer({ ...customer });
-  };
-
-  const handleSolutionChange = (e) => {
-    setSelectedSolution(e.target.value);
-  };
-
-  const handleEnvironmentChange = (e) => {
-    setSelectedEnvironment(e.target.value);
-  };
 
   const getNLUData = async (latestVersion) => {
     // 1. bot.csv
@@ -116,10 +65,9 @@ const useUpload = () => {
     ];
   };
 
-  const handleUploadCSV = async () => {
+  const handlePublish = async (selectedCustomer, selectedSolution) => {
     let currentStep = {};
     try {
-      setIsPublishing(true);
       resetProgress();
       /** Instructions
        * 1. Get solution details.
@@ -188,11 +136,12 @@ const useUpload = () => {
       setToastMessage({
         type: 'success',
         title: 'Success',
-        description: `You've successfully published ${botData.botName} solution as ${botData.latestVersion.version}.`,
+        description: `You've successfully published ${botData.latestVersion.version} of ${botData.botName} MicroApp on ${selectedEnvironment}.`,
       });
-      setIsPublishing(false);
-      setIsPublished(true);
-      // await serverFunctions.closeModal();
+      setTimeout(() => {
+        handleCloseToast();
+      }, 5000);
+      await serverFunctions.closeSidebar();
     } catch (error) {
       console.error(error);
       addProgress('error', currentStep);
@@ -201,8 +150,6 @@ const useUpload = () => {
         title: 'Error',
         description: error?.message?.split(' - ')?.[0],
       });
-      setIsPublishing(false);
-      setIsPublished(true);
     }
   };
 
@@ -211,32 +158,21 @@ const useUpload = () => {
   };
 
   useEffect(() => {
-    if (selectedCustomer) {
-      loadSolutions(selectedCustomer.name);
-    }
-  }, [selectedCustomer]);
-
-  useEffect(() => {
-    loadCustomers();
+    const publishDataAsync = async () => {
+      const publishDetails = await serverFunctions.getPublishDetails();
+      if (!publishDetails?.customerName || !publishDetails?.solutionName) {
+        return;
+      }
+      handlePublish(publishDetails?.customerName, publishDetails?.solutionName);
+    };
+    publishDataAsync();
   }, []);
 
   return {
-    dataLoading,
-    customers,
-    solutions,
-    selectedCustomer,
-    selectedSolution,
     toastMessage,
-    selectedCustomerDetails,
-    isPublishing,
-    isPublished,
-    handleCustomerChange,
-    handleSolutionChange,
-    handleEnvironmentChange,
-    handleUploadCSV,
     handleCloseToast,
     renderProgress,
   };
 };
 
-export default useUpload;
+export default usePublish;

@@ -45,13 +45,13 @@ const devDialogEntry = './dev/index.js';
 // define client entry points and output names
 const clientEntrypoints = [
   {
-    name: 'CLIENT - Modal Dialog',
-    entry: './src/client/modal-dialog/index.js',
-    filename: 'modal-dialog', // we'll add the .html suffix to these
-    template: './src/client/modal-dialog/index.html',
+    name: 'CLIENT - Publish Details',
+    entry: './src/client/publish-details/index.js',
+    filename: 'publish-details', // we'll add the .html suffix to these
+    template: './src/client/publish-details/index.html',
   },
   {
-    name: 'CLIENT - Sidebar',
+    name: 'CLIENT - Auth Sidebar',
     entry: './src/client/auth-sidebar/index.js',
     filename: 'auth-sidebar', // we'll add the .html suffix to these
     template: './src/client/auth-sidebar/index.html',
@@ -61,6 +61,18 @@ const clientEntrypoints = [
     entry: './src/client/auth-tab/index.js',
     filename: 'auth-tab', // we'll add the .html suffix to these
     template: './src/client/auth-tab/index.html',
+  },
+  {
+    name: 'CLIENT - Publish Sidebar Live',
+    entry: './src/client/publish-sidebar/publish-live/index.js',
+    filename: 'publish-sidebar-live', // we'll add the .html suffix to these
+    template: './src/client/publish-sidebar/publish-live/index.html',
+  },
+  {
+    name: 'CLIENT - Publish Sidebar Sandbox',
+    entry: './src/client/publish-sidebar/publish-sandbox/index.js',
+    filename: 'publish-sidebar-sandbox', // we'll add the .html suffix to these
+    template: './src/client/publish-sidebar/publish-sandbox/index.html',
   },
 ];
 

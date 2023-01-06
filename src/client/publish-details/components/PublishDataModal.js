@@ -2,49 +2,31 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
+import Spinner from 'react-bootstrap/Spinner';
 
-import useUpload from '../hooks/useUpload';
+import usePublishDetails from '../hooks/usePublishDetails';
 
-const CSVUpload = () => {
+const PublishDataModal = () => {
   const {
-    dataLoading,
+    customersLoading,
+    solutionsLoading,
     customers,
     solutions,
     selectedCustomer,
     selectedSolution,
     toastMessage,
-    isPublishing,
-    isPublished,
     handleCustomerChange,
     handleSolutionChange,
-    handleEnvironmentChange,
-    handleUploadCSV,
+    handleSavePublishData,
     handleCloseToast,
-    renderProgress,
-  } = useUpload();
+  } = usePublishDetails();
 
-  if (isPublishing || isPublished) {
-    return (
-      <>
-        {!!toastMessage && (
-          <Alert
-            variant={toastMessage.type}
-            onClose={handleCloseToast}
-            dismissible
-          >
-            <Alert.Heading>
-              <strong className="mr-auto">{toastMessage.title}</strong>
-            </Alert.Heading>
-            <p>{toastMessage.description}</p>
-          </Alert>
-        )}
-        {renderProgress()}
-      </>
-    );
-  }
+  const handleSubmit = async () => {
+    await handleSavePublishData();
+  };
 
   return (
-    <Form onSubmit={handleUploadCSV}>
+    <Form onSubmit={handleSubmit}>
       {!!toastMessage && (
         <Alert
           variant={toastMessage.type}
@@ -61,7 +43,7 @@ const CSVUpload = () => {
         <Form.Label>Customer</Form.Label>
         <Form.Control
           as="select"
-          disabled={dataLoading}
+          disabled={customersLoading}
           onChange={handleCustomerChange}
         >
           <option>Select a customer</option>
@@ -71,12 +53,15 @@ const CSVUpload = () => {
             </option>
           ))}
         </Form.Control>
+        {customersLoading && (
+          <Spinner animation="border" variant="primary" size="sm" />
+        )}
       </Form.Group>
       <Form.Group className="mb-3" controlId="formSolution">
         <Form.Label>Solution</Form.Label>
         <Form.Control
           as="select"
-          disabled={dataLoading || !selectedCustomer}
+          disabled={solutionsLoading || customersLoading || !selectedCustomer}
           onChange={handleSolutionChange}
         >
           <option>Select a solution</option>
@@ -86,23 +71,24 @@ const CSVUpload = () => {
             </option>
           ))}
         </Form.Control>
-      </Form.Group>
-      <Form.Group className="mb-3" controlId="formEnv">
-        <Form.Label>Environment</Form.Label>
-        <Form.Control as="select" onChange={handleEnvironmentChange}>
-          <option value="sandbox">Sandbox</option>
-          <option value="live">Live</option>
-        </Form.Control>
+        {solutionsLoading && (
+          <Spinner animation="border" variant="primary" size="sm" />
+        )}
       </Form.Group>
       <Button
         variant="primary"
         type="submit"
-        disabled={dataLoading || !selectedCustomer || !selectedSolution}
+        disabled={
+          customersLoading ||
+          solutionsLoading ||
+          !selectedCustomer ||
+          !selectedSolution
+        }
       >
-        Publish
+        Save Publish Settings
       </Button>
     </Form>
   );
 };
 
-export default CSVUpload;
+export default PublishDataModal;
