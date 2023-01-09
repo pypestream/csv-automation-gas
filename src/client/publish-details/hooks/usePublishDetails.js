@@ -39,8 +39,8 @@ const usePublishDetails = () => {
 
   const handleCustomerChange = (e) => {
     const customerId = e.target.value;
-    const customer = customers.find((c) => c.id === customerId);
-    setSelectedCustomer({ ...customer });
+    const customer = customers.find((c) => c.id === customerId) || '';
+    setSelectedCustomer(customer);
   };
 
   const handleSolutionChange = (e) => {
@@ -57,10 +57,6 @@ const usePublishDetails = () => {
       description: 'Publish Data saved successfully',
       type: 'success',
     });
-    setTimeout(() => {
-      handleCloseToast();
-    }, 5000);
-    await serverFunctions.closeModal();
   };
 
   const handleCloseToast = () => {
@@ -76,6 +72,26 @@ const usePublishDetails = () => {
   useEffect(() => {
     loadCustomers();
   }, []);
+
+  useEffect(() => {
+    const fetchPublishDetailsIfSet = async () => {
+      const publishDetails = await serverFunctions.getPublishDetails();
+      if (!publishDetails?.customerName || !publishDetails?.solutionName) {
+        return;
+      }
+      const { customerName, solutionName } = publishDetails;
+      if (customers.length) {
+        const selectedCustomerData = customers.find(
+          (cust) => cust.name === customerName
+        );
+        setSelectedCustomer(selectedCustomerData);
+      }
+      if (solutions.length) {
+        setSelectedSolution(solutionName);
+      }
+    };
+    fetchPublishDetailsIfSet();
+  }, [customers, solutions]);
 
   return {
     customersLoading,

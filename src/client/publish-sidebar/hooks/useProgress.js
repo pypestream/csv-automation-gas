@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Card from 'react-bootstrap/Card';
 import Spinner from 'react-bootstrap/Spinner';
 
 const useProgress = () => {
@@ -71,22 +70,11 @@ const useProgress = () => {
     );
   };
 
-  const renderProgress = () => {
-    return (
-      <Card body>
-        {progressStack.map((step) => (
-          <div key={step.id} className="step-in-progress">
-            <ProgressElement status={step.status} msg={step.msg} />
-          </div>
-        ))}
-      </Card>
-    );
-  };
-
   return {
     resetProgress,
     addProgress,
-    renderProgress,
+    progressStack,
+    ProgressElement,
   };
 };
 

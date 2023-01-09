@@ -4,9 +4,10 @@
   "extends": [
     "airbnb-base",
     "plugin:prettier/recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
   ],
-  "plugins": ["babel", "react", "prettier"],
+  "plugins": ["babel", "react", "prettier", "react-hooks"],
   "env": {
     "browser": true,
     "es6": true
