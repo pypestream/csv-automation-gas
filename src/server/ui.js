@@ -128,6 +128,10 @@ export const closeModal = () => {
 
 export const showConfirmationOnLivePublish = (callback) => {
   const data = getPublishDetails();
+  if (!data) {
+    showPublishDetailsModal();
+    return;
+  }
   const { customerName, solutionName } = data;
   const ui = SpreadsheetApp.getUi();
   const response = ui.alert(
