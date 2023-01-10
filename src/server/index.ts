@@ -9,7 +9,7 @@ import {
   showPublishSidebarSandbox,
   showPublishSidebarLive,
   showPublishDetailsModal,
-  closeUI
+  showConfirmationOnLivePublish
 } from './ui';
 
 import {
@@ -44,5 +44,5 @@ export {
   showPublishSidebarLive,
   showPublishDetailsModal,
   deleteAllProperties,
-  closeUI
+  showConfirmationOnLivePublish
 };

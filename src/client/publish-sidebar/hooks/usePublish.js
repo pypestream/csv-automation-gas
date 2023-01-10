@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Card from 'react-bootstrap/Card';
 import {
-  getCustomers,
-  getCustomer,
   getBotsData,
   getBotVersion,
   getNLUFileFromServer,
@@ -17,8 +15,10 @@ import useProgress from './useProgress';
 
 const usePublish = (selectedEnvironment) => {
   const [toastMessage, setToastMessage] = useState(null);
+  const [publishDetails, setPublishDetails] = useState(null);
 
-  const { resetProgress, addProgress, renderProgress } = useProgress();
+  const { resetProgress, addProgress, progressStack, ProgressElement } =
+    useProgress();
 
   const getNLUData = async (latestVersion) => {
     // 1. bot.csv
@@ -138,10 +138,6 @@ const usePublish = (selectedEnvironment) => {
         title: 'Success',
         description: `You've successfully published ${botData.latestVersion.version} of ${botData.botName} MicroApp on ${selectedEnvironment}.`,
       });
-      setTimeout(() => {
-        handleCloseToast();
-      }, 5000);
-      await serverFunctions.closeSidebar();
     } catch (error) {
       console.error(error);
       addProgress('error', currentStep);
@@ -158,15 +154,35 @@ const usePublish = (selectedEnvironment) => {
   };
 
   useEffect(() => {
-    const publishDataAsync = async () => {
-      const publishDetails = await serverFunctions.getPublishDetails();
-      if (!publishDetails?.customerName || !publishDetails?.solutionName) {
+    const fetchPublishDataAsync = async () => {
+      const publishData = await serverFunctions.getPublishDetails();
+      if (!publishData?.customerName || !publishData?.solutionName) {
         return;
       }
-      handlePublish(publishDetails?.customerName, publishDetails?.solutionName);
+      setPublishDetails({
+        customerName: publishData.customerName,
+        solutionName: publishData.solutionName,
+      });
+      handlePublish(publishData.customerName, publishData.solutionName);
     };
-    publishDataAsync();
+    fetchPublishDataAsync();
   }, []);
+
+  const renderProgress = useCallback(() => {
+    return (
+      <Card body>
+        <Card.Title>{publishDetails?.customerName}</Card.Title>
+        <Card.Subtitle className="mb-2 text-muted">
+          {publishDetails?.solutionName}
+        </Card.Subtitle>
+        {progressStack.map((step) => (
+          <div key={step.id} className="step-in-progress">
+            <ProgressElement status={step.status} msg={step.msg} />
+          </div>
+        ))}
+      </Card>
+    );
+  }, [publishDetails, progressStack]);
 
   return {
     toastMessage,

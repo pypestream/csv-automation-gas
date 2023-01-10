@@ -44,9 +44,12 @@ const PublishDataModal = () => {
         <Form.Control
           as="select"
           disabled={customersLoading}
+          value={selectedCustomer?.id || ''}
           onChange={handleCustomerChange}
         >
-          <option>Select a customer</option>
+          <option key="default-cust-0" value="">
+            Select a customer
+          </option>
           {customers.map((customer) => (
             <option key={customer.id} value={customer.id}>
               {customer.name}
@@ -62,9 +65,12 @@ const PublishDataModal = () => {
         <Form.Control
           as="select"
           disabled={solutionsLoading || customersLoading || !selectedCustomer}
+          value={selectedSolution || ''}
           onChange={handleSolutionChange}
         >
-          <option>Select a solution</option>
+          <option key="default-sol-0" value="">
+            Select a solution
+          </option>
           {solutions.map((solution, index) => (
             <option key={index} value={solution}>
               {solution}

@@ -82,7 +82,7 @@ export const showPublishSidebarSandbox = () => {
 export const showPublishSidebarLive = () => {
   const Authservice = getApiService();
   if (Authservice.hasAccess()) {
-    openPublishSolutionSidebar('live');
+    showConfirmationOnLivePublish(openPublishSolutionSidebar);
   } else {
     showAuthSidebar();
   }
@@ -126,7 +126,24 @@ export const closeModal = () => {
   SpreadsheetApp.getUi().showModalDialog(html, 'Publish Dialog');
 };
 
-export const closeUI = () => {
-  // eslint-disable-next-line no-undef
-  google.script.host.close();
+export const showConfirmationOnLivePublish = (callback) => {
+  const data = getPublishDetails();
+  if (!data) {
+    showPublishDetailsModal();
+    return;
+  }
+  const { customerName, solutionName } = data;
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.alert(
+    'Publishing to Live!',
+    `Are you sure you want to publish below solution to Live environment ?\n Customer - ${customerName}\n Solution - ${solutionName}`,
+    ui.ButtonSet.YES_NO
+  );
+
+  // Process the user's response.
+  if (response === ui.Button.YES) {
+    callback('live');
+  } else {
+    Logger.log('Denied publishing to Live env.');
+  }
 };
