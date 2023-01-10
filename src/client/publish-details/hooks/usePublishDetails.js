@@ -91,7 +91,8 @@ const usePublishDetails = () => {
       }
     };
     fetchPublishDetailsIfSet();
-  }, [customers, solutions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customers]);
 
   return {
     customersLoading,

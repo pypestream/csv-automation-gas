@@ -18,13 +18,31 @@ const createCSVFromSheet = () => {
   return csv;
 };
 
+const getActiveSheetName = () => {
+  return SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().getName();
+};
+
 const savePublishDetails = ({ customerName, solutionName }) => {
   try {
+    const sheetName = getActiveSheetName();
     // Set multiple script properties in one call.
     const scriptProperties = PropertiesService.getDocumentProperties();
+    const publishData = scriptProperties.getProperties();
+    if (!Object.keys(publishData).length) {
+      scriptProperties.setProperties({
+        customerName,
+        solutionName: JSON.stringify({
+          [sheetName]: solutionName,
+        }),
+      });
+      return;
+    }
     scriptProperties.setProperties({
       customerName,
-      solutionName,
+      solutionName: JSON.stringify({
+        ...JSON.parse(publishData.solutionName),
+        [sheetName]: solutionName,
+      }),
     });
     return;
   } catch (err) {
@@ -35,13 +53,22 @@ const savePublishDetails = ({ customerName, solutionName }) => {
 
 const getPublishDetails = () => {
   try {
-    // Set multiple script properties in one call.
+    // Get multiple script properties in one call.
     const scriptProperties = PropertiesService.getDocumentProperties();
     const data = scriptProperties.getProperties();
-    if (Object.keys(data).length) {
-      return data;
+    const sheetName = getActiveSheetName();
+    if (!Object.keys(data).length) {
+      return null;
     }
-    return null;
+    const { customerName, solutionName } = data;
+    const parsedSolution = JSON.parse(solutionName);
+    if (!parsedSolution[sheetName]) {
+      return null;
+    }
+    return {
+      customerName,
+      solutionName: parsedSolution[sheetName],
+    };
   } catch (err) {
     return Error(err);
   }
@@ -56,6 +83,7 @@ export {
   createBlob,
   createCSVFromSheet,
   savePublishDetails,
+  getActiveSheetName,
   getPublishDetails,
   deleteAllProperties,
 };

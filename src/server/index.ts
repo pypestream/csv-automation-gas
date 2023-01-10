@@ -21,6 +21,7 @@ import {
   createBlob,
   createCSVFromSheet,
   savePublishDetails,
+  getActiveSheetName,
   getPublishDetails,
   deleteAllProperties
 } from "./utils";
@@ -38,6 +39,7 @@ export {
   createBlob,
   createCSVFromSheet,
   callApiWithFormData,
+  getActiveSheetName,
   savePublishDetails,
   getPublishDetails,
   showPublishSidebarSandbox,
