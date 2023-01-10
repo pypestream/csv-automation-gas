@@ -17,7 +17,7 @@ const Sidebar = () => {
     } catch (err) {
       // eslint-disable-next-line no-undef
       Logger.log(err.message);
-      console.log(err.message);
+      console.error(err.message);
       await serverFunctions.closeSidebar();
     }
   };

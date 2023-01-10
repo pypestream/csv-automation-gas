@@ -18,32 +18,27 @@ const createCSVFromSheet = () => {
   return csv;
 };
 
-const savePublishDataToPropertiesService = ({
-  customerName,
-  solutionName,
-  env,
-}) => {
+const savePublishDetails = ({ customerName, solutionName }) => {
   try {
     // Set multiple script properties in one call.
     const scriptProperties = PropertiesService.getDocumentProperties();
     scriptProperties.setProperties({
       customerName,
       solutionName,
-      env,
     });
     return;
   } catch (err) {
     // eslint-disable-next-line consistent-return
-    return Error(err);
+    throw new Error(err);
   }
 };
 
-const checkPublishDataExistsInPropertiesService = () => {
+const getPublishDetails = () => {
   try {
     // Set multiple script properties in one call.
     const scriptProperties = PropertiesService.getDocumentProperties();
     const data = scriptProperties.getProperties();
-    if (data) {
+    if (Object.keys(data).length) {
       return data;
     }
     return null;
@@ -52,9 +47,15 @@ const checkPublishDataExistsInPropertiesService = () => {
   }
 };
 
+const deleteAllProperties = () => {
+  const properties = PropertiesService.getDocumentProperties();
+  properties.deleteAllProperties();
+};
+
 export {
   createBlob,
   createCSVFromSheet,
-  savePublishDataToPropertiesService,
-  checkPublishDataExistsInPropertiesService,
+  savePublishDetails,
+  getPublishDetails,
+  deleteAllProperties,
 };
