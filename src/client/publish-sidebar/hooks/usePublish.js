@@ -170,7 +170,7 @@ const usePublish = (selectedEnvironment) => {
 
   const renderProgress = useCallback(() => {
     return (
-      <Card body>
+      <Card body style={{ border: 'none' }}>
         <Card.Title>{publishDetails?.customerName}</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
           {publishDetails?.solutionName}

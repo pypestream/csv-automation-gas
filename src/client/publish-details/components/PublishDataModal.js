@@ -39,10 +39,11 @@ const PublishDataModal = () => {
           <p>{toastMessage.description}</p>
         </Alert>
       )}
-      <Form.Group className="mb-3" controlId="formCustomer">
+      <Form.Group className="mb-3 position-relative" controlId="formCustomer">
         <Form.Label>Customer</Form.Label>
         <Form.Control
           as="select"
+          className="mx-1"
           disabled={customersLoading}
           value={selectedCustomer?.id || ''}
           onChange={handleCustomerChange}
@@ -57,13 +58,23 @@ const PublishDataModal = () => {
           ))}
         </Form.Control>
         {customersLoading && (
-          <Spinner animation="border" variant="primary" size="sm" />
+          <Spinner
+            animation="border"
+            variant="primary"
+            size="sm"
+            className="position-absolute"
+            style={{
+              top: '39px',
+              right: '0.5rem',
+            }}
+          />
         )}
       </Form.Group>
-      <Form.Group className="mb-3" controlId="formSolution">
+      <Form.Group className="mb-3 position-relative" controlId="formSolution">
         <Form.Label>Solution</Form.Label>
         <Form.Control
           as="select"
+          className="mx-1"
           disabled={solutionsLoading || customersLoading || !selectedCustomer}
           value={selectedSolution || ''}
           onChange={handleSolutionChange}
@@ -78,7 +89,16 @@ const PublishDataModal = () => {
           ))}
         </Form.Control>
         {solutionsLoading && (
-          <Spinner animation="border" variant="primary" size="sm" />
+          <Spinner
+            animation="border"
+            variant="primary"
+            size="sm"
+            className="position-absolute"
+            style={{
+              top: '39px',
+              right: '0.5rem',
+            }}
+          />
         )}
       </Form.Group>
       <Button

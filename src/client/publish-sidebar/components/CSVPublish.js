@@ -13,6 +13,7 @@ const CSVPublish = ({ env }) => {
           variant={toastMessage.type}
           onClose={handleCloseToast}
           dismissible
+          className="m-2"
         >
           <Alert.Heading>
             <strong className="mr-auto">{toastMessage.title}</strong>
