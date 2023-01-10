@@ -39,7 +39,11 @@ const PublishDataModal = () => {
           <p>{toastMessage.description}</p>
         </Alert>
       )}
-      <Form.Group className="mb-3 position-relative" controlId="formCustomer">
+      <Form.Group
+        className="mb-3 position-relative"
+        controlId="formCustomer"
+        style={{ width: '400px' }}
+      >
         <Form.Label>Customer</Form.Label>
         <Form.Control
           as="select"
@@ -64,13 +68,17 @@ const PublishDataModal = () => {
             size="sm"
             className="position-absolute"
             style={{
-              top: '39px',
+              top: '44px',
               right: '0.5rem',
             }}
           />
         )}
       </Form.Group>
-      <Form.Group className="mb-3 position-relative" controlId="formSolution">
+      <Form.Group
+        className="mb-3 position-relative"
+        controlId="formSolution"
+        style={{ width: '400px' }}
+      >
         <Form.Label>Solution</Form.Label>
         <Form.Control
           as="select"
@@ -95,7 +103,7 @@ const PublishDataModal = () => {
             size="sm"
             className="position-absolute"
             style={{
-              top: '39px',
+              top: '44px',
               right: '0.5rem',
             }}
           />
