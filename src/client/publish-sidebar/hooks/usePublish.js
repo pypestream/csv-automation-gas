@@ -15,7 +15,7 @@ import useProgress from './useProgress';
 
 const usePublish = (selectedEnvironment) => {
   const [toastMessage, setToastMessage] = useState(null);
-  const [publishDetails, setPublishDetails] = useState(null);
+  const [publishDetailsForUI, setPublishDetailsForUI] = useState(null);
 
   const { resetProgress, addProgress, progressStack, ProgressElement } =
     useProgress();
@@ -159,21 +159,22 @@ const usePublish = (selectedEnvironment) => {
       if (!publishData?.customerName || !publishData?.solutionName) {
         return;
       }
-      setPublishDetails({
+      setPublishDetailsForUI({
         customerName: publishData.customerName,
         solutionName: publishData.solutionName,
       });
       handlePublish(publishData.customerName, publishData.solutionName);
     };
     fetchPublishDataAsync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderProgress = useCallback(() => {
     return (
       <Card body>
-        <Card.Title>{publishDetails?.customerName}</Card.Title>
+        <Card.Title>{publishDetailsForUI?.customerName}</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
-          {publishDetails?.solutionName}
+          {publishDetailsForUI?.solutionName}
         </Card.Subtitle>
         {progressStack.map((step) => (
           <div key={step.id} className="step-in-progress">
@@ -182,7 +183,7 @@ const usePublish = (selectedEnvironment) => {
         ))}
       </Card>
     );
-  }, [publishDetails, progressStack]);
+  }, [publishDetailsForUI, progressStack]);
 
   return {
     toastMessage,
